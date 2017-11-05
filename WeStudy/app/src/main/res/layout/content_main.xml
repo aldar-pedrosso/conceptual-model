@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.pedro.westudy.ActivityMain"
+    tools:showIn="@layout/activity_main">
+
+
+    <EditText
+        android:id="@+id/content_main-etUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="102dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Username" />
+
+    <EditText
+        android:id="@+id/content_main-etPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/content_main-etUsername"
+        android:layout_alignRight="@+id/content_main-etUsername"
+        android:layout_below="@+id/content_main-etUsername"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/content_main-btnLogin"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/content_main-etPassword"
+        android:layout_alignStart="@+id/content_main-etPassword"
+        android:layout_below="@+id/content_main-etPassword"
+        android:layout_marginTop="45dp"
+        android:text="Log in" />
+
+    <RelativeLayout
+        android:id="@+id/content_main-rllEasyLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/content_main-btnLogin"
+        android:layout_margin="30dp"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/black"
+        android:visibility="visible">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:background="@android:color/background_light">
+
+            <TextView
+                android:id="@+id/content_main-tvAutoLoginInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="10dp"
+                android:text="Test login" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/content_main-tvAutoLoginInfo">
+                <ImageButton
+                    android:id="@+id/content_main-btnStudent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:src="@drawable/ic_student" />
+
+                <ImageButton
+                    android:id="@+id/content_main-btnTeacher"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@id/content_main-btnStudent"
+                    android:src="@drawable/ic_teacher" />
+
+                <ImageButton
+                    android:id="@+id/content_main-btnSchool"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@id/content_main-btnTeacher"
+                    android:src="@drawable/ic_school" />
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>
