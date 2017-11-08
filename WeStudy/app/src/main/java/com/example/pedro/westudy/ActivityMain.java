@@ -9,11 +9,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
+import statics.CurrentUser;
+import statics.DatabaseHelper;
 import statics.UserRank;
-import statics.User;
 
 public class ActivityMain extends AppCompatActivity {
+    private final String LOG_TAG = this.getClass().getSimpleName();
+
     // ---------------------------------------------------- Options for testing!!!
     // todo: show easy login or not
     boolean bolShowEasyLogin = true;
@@ -37,8 +41,11 @@ public class ActivityMain extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Instantiate the database
+        DatabaseHelper.Instantiate(getBaseContext());
+
         // reset user
-        User.reset();
+        CurrentUser.reset();
 
         // set normal controls
         etUsername = findViewById(R.id.content_main_etUsername);
@@ -49,7 +56,7 @@ public class ActivityMain extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tryLogin();
+                checkLogin();
             }
         });
 
@@ -59,23 +66,27 @@ public class ActivityMain extends AppCompatActivity {
         btnTeacher = findViewById(R.id.content_main_btnTeacher);
         btnSchool = findViewById(R.id.content_main_btnSchool);
 
+        // todo new action
         // set listeners for easy login
         btnStudent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                etUsername.setText("Student");
+                etUsername.setText("StudentDefault");
+                etPassword.setText("Default");
             }
         });
         btnTeacher.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                etUsername.setText("Teacher");
+                etUsername.setText("TeacherDefault");
+                etPassword.setText("Default");
             }
         });
         btnSchool.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                etUsername.setText("School");
+                etUsername.setText("SchoolDefault");
+                etPassword.setText("Default");
             }
         });
 
@@ -87,30 +98,37 @@ public class ActivityMain extends AppCompatActivity {
     }
 
     // attempt to log in
-    private void tryLogin(){
-        User.username = etUsername.getText().toString().trim().toLowerCase();
+    private void checkLogin() {
+        // todo: new login?
         Intent MyHome = new Intent(this, ActivityStudentHome.class);
 
-        // check user & set home
-        if (User.username.equals("student")){
-            User.rank = UserRank.Student;
-            MyHome = new Intent(this, ActivityStudentHome.class);
-        }
-        else if (User.username.equals("teacher")){
-            User.rank = UserRank.Teacher;
-            btnLogin.setText(User.username);
-        }
-        else if (User.username.equals("school")){
-            User.rank = UserRank.School;
-            btnLogin.setText(User.username);
+        if (DatabaseHelper.tryLogin(etUsername.getText().toString(), etPassword.getText().toString())){
+            // check user & set home
+            switch (CurrentUser.user.Rank){
+                case Student:
+                    MyHome = new Intent(this, ActivityStudentHome.class);
+                    break;
+
+                case Teacher:
+                    // todo: change to other home
+                    MyHome = new Intent(this, ActivityStudentHome.class);
+                    break;
+
+                case School:
+                    // todo: change to other home
+                    MyHome = new Intent(this, ActivityStudentHome.class);
+                    break;
+            }
+
+            // say hello
+            Toast.makeText(this.getBaseContext(), "Welcome " + CurrentUser.user.Username, Toast.LENGTH_SHORT).show();
+
+            // go to home
+            startActivity(MyHome);
         }
         else {
-            //wrong user
-            User.reset();
+            // wrong user
+            Toast.makeText(this.getBaseContext(), "Wrong username or password", Toast.LENGTH_SHORT).show();
         }
-
-        // go to next activity
-        if (User.username != null)
-            startActivity(MyHome);
     }
 }
