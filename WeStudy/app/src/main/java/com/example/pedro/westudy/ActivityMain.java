@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,15 +14,21 @@ import android.widget.Toast;
 
 import statics.CurrentUser;
 import statics.DatabaseHelper;
-import statics.UserRank;
 
 public class ActivityMain extends AppCompatActivity {
-    private final String LOG_TAG = this.getClass().getSimpleName();
-
     // ---------------------------------------------------- Options for testing!!!
     // todo: show easy login or not
     boolean bolShowEasyLogin = true;
     // ----------------------------------------------------
+
+    // global variables
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
+    public static final String LOG_TAG_prefix = "EASY-DEBUG ";
+
+    private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
+
+    // check if 'log-out' was pressed
+    public static boolean bolLogOut = false;
 
     // normal controls on screen
     EditText etUsername;
@@ -42,7 +49,7 @@ public class ActivityMain extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // Instantiate the database
-        DatabaseHelper.Instantiate(getBaseContext());
+        DatabaseHelper.instantiate(getBaseContext());
 
         // reset user
         CurrentUser.reset();
@@ -66,7 +73,7 @@ public class ActivityMain extends AppCompatActivity {
         btnTeacher = findViewById(R.id.content_main_btnTeacher);
         btnSchool = findViewById(R.id.content_main_btnSchool);
 
-        // todo new action
+        // todo: easy login data
         // set listeners for easy login
         btnStudent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +104,21 @@ public class ActivityMain extends AppCompatActivity {
             rllEasyLogin.setVisibility(View.GONE);
     }
 
+    // if came back to this activity, check if user logged out
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // reset login
+        if (bolLogOut){
+            Log.d(LOG_TAG, "Logging out done, resetting data.");
+
+            etUsername.setText("");
+            etPassword.setText("");
+            bolLogOut = false;
+        }
+    }
+
     // attempt to log in
     private void checkLogin() {
         // todo: new login?
@@ -106,16 +128,19 @@ public class ActivityMain extends AppCompatActivity {
             // check user & set home
             switch (CurrentUser.user.Rank){
                 case Student:
+                    Log.d(LOG_TAG, "Recognized as student");
                     MyHome = new Intent(this, ActivityStudentHome.class);
                     break;
 
                 case Teacher:
                     // todo: change to other home
+                    Log.d(LOG_TAG, "Recognized as teacher");
                     MyHome = new Intent(this, ActivityStudentHome.class);
                     break;
 
                 case School:
                     // todo: change to other home
+                    Log.d(LOG_TAG, "Recognized as teacher");
                     MyHome = new Intent(this, ActivityStudentHome.class);
                     break;
             }

@@ -8,15 +8,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.pedro.westudy.ActivityMain;
+
 import java.util.ArrayList;
 
 import objects.User;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String LOG_TAG = DatabaseHelper.class.getSimpleName();
+    private static final String LOG_TAG = ActivityMain.LOG_TAG_prefix + DatabaseHelper.class.getSimpleName();
+
+    // management variables
     private static final String DATABASE_NAME = "WeStudy";
     private static final int DATABASE_VERSION = 5;
-
     private static DatabaseHelper ourInstance = null;
 
     private DatabaseHelper(Context context) {
@@ -27,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Set up instance for static usage.
      * @param context basic context -> getBaseContext()
      */
-    public static void Instantiate(Context context) {
+    public static void instantiate(Context context) {
         ourInstance = new DatabaseHelper(context);
     }
 
@@ -185,4 +188,62 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return false;
         }
     }
+
+    // all database code concerning the User
+    public static class UpdateUser {
+        private static boolean generalUpdate(ContentValues values){
+            // get username
+            String username = DatabaseUtils.sqlEscapeString(CurrentUser.user.Username);
+
+            SQLiteDatabase db = ourInstance.getWritableDatabase();
+
+            // updating row
+            int result = db.update("User", values, "Username = " + username, null);
+
+            // check result
+            switch (result){
+                case 1:
+                    Log.d(LOG_TAG,"Update successful!");
+                    return true;
+
+                case 0:
+                    Log.d(LOG_TAG,"Update failed!");
+                    break;
+
+                default:
+                    Log.d(LOG_TAG,"Something went wrong, multiple rows got updated!!!");
+                    break;
+            }
+
+            return false;
+        }
+
+        /**
+         * Change avatar for the current user
+         * @param newAvatar The new avatar image object
+         */
+        public static void changeAvatar(byte[] newAvatar){
+            ContentValues values = new ContentValues();
+            values.put("Avatar", newAvatar);
+
+            // make changes
+            generalUpdate(values);
+
+            // also change on current user
+            CurrentUser.user.Avatar = newAvatar;
+        }
+
+        /**
+         * Change password for the current user
+         * @param newPassword the new password
+         */
+        public static void changePassword(String newPassword){
+            ContentValues values = new ContentValues();
+            values.put("Password", newPassword);
+
+            // make changes
+            generalUpdate(values);
+        }
+    }
 }
+
