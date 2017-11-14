@@ -25,8 +25,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import statics.CurrentUser;
 import statics.DatabaseHelper;
+
+import static statics.DatabaseHelper.CurrentUser;
 
 public class ActivitySettings extends AppCompatActivity {
     private final String LOG_TAG = ActivityMain.LOG_TAG_prefix +  this.getClass().getSimpleName();
@@ -47,8 +48,8 @@ public class ActivitySettings extends AppCompatActivity {
 
         // get current avatar, if any
         // with help from https://stackoverflow.com/a/9357943
-        if (CurrentUser.user.Avatar != null){
-            imgAvatar.setImageBitmap(BitmapFactory.decodeByteArray(CurrentUser.user.Avatar, 0, CurrentUser.user.Avatar.length));
+        if (CurrentUser.Avatar != null){
+            imgAvatar.setImageBitmap(BitmapFactory.decodeByteArray(CurrentUser.Avatar, 0, CurrentUser.Avatar.length));
         }
 
         // Avatar button action

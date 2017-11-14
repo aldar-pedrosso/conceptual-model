@@ -9,7 +9,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+
+import objects.AdapterCourse;
 
 public class ActivityStudentHome extends AppCompatActivity {
     private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
@@ -22,13 +28,30 @@ public class ActivityStudentHome extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // floating action button
-        FloatingActionButton fab = findViewById(R.id.activity_student_fabNewCourse);
+        FloatingActionButton fab = findViewById(R.id.activity_student_home_fabNewCourse);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getBaseContext(), "Action for adding new course", Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        // Array of strings...
+        ArrayList<String> mobileArray = new ArrayList<>();
+        mobileArray.add("Android");
+        mobileArray.add("IPhone");
+        mobileArray.add("WindowsMobile");
+        mobileArray.add("Blackberry");
+        mobileArray.add("WebOS");
+        mobileArray.add("Ubuntu");
+        mobileArray.add("Windows7");
+        mobileArray.add("Max OS X");
+
+        AdapterCourse adapter = new AdapterCourse(this, mobileArray);
+
+        ListView listView = findViewById(R.id.activity_student_home_lvCourses);
+        listView.setAdapter(adapter);
     }
 
     @Override

@@ -1,115 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context="com.example.pedro.westudy.ActivitySettings"
-    android:scrollbars="vertical">
-
-    <TextView
-        android:id="@+id/activity_settings-tvAvatar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:text="Avatar:" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/activity_settings-rllAvatar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/activity_settings-tvAvatar"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
-        android:background="@android:color/black">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <TextView
+            android:id="@+id/activity_settings-tvAvatar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:background="@android:color/background_light">
-
-            <ImageView
-                android:id="@+id/activity_settings-imgAvatar"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:src="@drawable/default_profile" />
-
-        </RelativeLayout>
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/activity_settings-btnNewAvatar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/activity_settings-rllAvatar"
-        android:layout_centerHorizontal="true"
-        android:text="New avatar" />
-
-    <RelativeLayout
-        android:id="@+id/activity_settings-rllChangePassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/activity_settings-btnNewAvatar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp">
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Avatar:" />
 
         <RelativeLayout
-            android:id="@+id/activity_settings-rllPassword1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/activity_settings-tvPassword1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:text="Type new password:" />
-
-            <EditText
-                android:id="@+id/activity_settings-etPassword1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/activity_settings-tvPassword1"
-                android:ems="10"
-                android:inputType="textPassword" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
+            android:id="@+id/activity_settings-rllAvatar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/activity_settings-rllPassword1"
-            android:layout_marginTop="20dp">
+            android:layout_below="@id/activity_settings-tvAvatar"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:background="@android:color/black">
 
-            <TextView
-                android:id="@+id/activity_settings-tvPassword2"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:text="Retype new password:" />
+                android:layout_margin="3dp"
+                android:background="@android:color/background_light">
 
-            <EditText
-                android:id="@+id/activity_settings-etPassword2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/activity_settings-tvPassword2"
-                android:ems="10"
-                android:inputType="textPassword" />
+                <ImageView
+                    android:id="@+id/activity_settings-imgAvatar"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/default_profile" />
+
+            </RelativeLayout>
         </RelativeLayout>
+
+        <Button
+            android:id="@+id/activity_settings-btnNewAvatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/activity_settings-rllAvatar"
+            android:layout_centerHorizontal="true"
+            android:text="New avatar" />
+
+        <RelativeLayout
+            android:id="@+id/activity_settings-rllChangePassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/activity_settings-btnNewAvatar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp">
+
+            <RelativeLayout
+                android:id="@+id/activity_settings-rllPassword1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/activity_settings-tvPassword1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Type new password:" />
+
+                <EditText
+                    android:id="@+id/activity_settings-etPassword1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/activity_settings-tvPassword1"
+                    android:ems="10"
+                    android:inputType="textPassword" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/activity_settings-rllPassword1"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/activity_settings-tvPassword2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="Retype new password:" />
+
+                <EditText
+                    android:id="@+id/activity_settings-etPassword2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/activity_settings-tvPassword2"
+                    android:ems="10"
+                    android:inputType="textPassword" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/activity_settings-btnChangePassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/activity_settings-rllChangePassword"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="Change password" />
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/activity_settings-btnChangePassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/activity_settings-rllChangePassword"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="Change password"/>
-</RelativeLayout>
+</ScrollView>

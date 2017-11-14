@@ -17,9 +17,12 @@ import objects.User;
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = ActivityMain.LOG_TAG_prefix + DatabaseHelper.class.getSimpleName();
 
+    // the current user in the application
+    public static User CurrentUser = null;
+
     // management variables
     private static final String DATABASE_NAME = "WeStudy";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 7;
     private static DatabaseHelper ourInstance = null;
 
     private DatabaseHelper(Context context) {
@@ -34,23 +37,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ourInstance = new DatabaseHelper(context);
     }
 
+    public static void resetCurrentUser(){
+        CurrentUser = null;
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         // default database structure
-        db.execSQL("CREATE TABLE 'Comment' ('id' INTEGER PRIMARY KEY  AUTOINCREMENT NOT NULL , 'Content' VARCHAR NOT NULL , 'Post_id' INTEGER NOT NULL , 'User_id' INTEGER NOT NULL );");
+        db.execSQL("CREATE TABLE 'Comment' ('id' INTEGER PRIMARY KEY  AUTOINCREMENT NOT NULL , 'Content' VARCHAR NOT NULL , 'Post_id' INTEGER NOT NULL , 'User_id' INTEGER NOT NULL , 'Time' DATETIME NOT NULL  DEFAULT (CURRENT_TIMESTAMP));");
         db.execSQL("CREATE TABLE 'Course' ('id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'Name' VARCHAR NOT NULL );");
-        db.execSQL("CREATE TABLE 'Post' ('id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'Title' VARCHAR NOT NULL , 'Content' VARCHAR NOT NULL , 'Hidden' BOOL NOT NULL , 'Pinned' BOOL NOT NULL , 'Requested' BOOL NOT NULL , 'User_id' INTEGER NOT NULL , 'Course_id' INTEGER NOT NULL );");
+        db.execSQL("CREATE TABLE 'Post' ('id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'Title' VARCHAR NOT NULL , 'Content' VARCHAR NOT NULL , 'Hidden' BOOL NOT NULL , 'Pinned' BOOL NOT NULL , 'Requested' BOOL NOT NULL , 'User_id' INTEGER NOT NULL , 'Course_id' INTEGER NOT NULL , 'Time' DATETIME NOT NULL  DEFAULT (CURRENT_TIMESTAMP) );");
         db.execSQL("CREATE TABLE 'Rank' ('id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'Name' VARCHAR NOT NULL  UNIQUE );");
         db.execSQL("CREATE TABLE 'User' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL ,'Username' VARCHAR NOT NULL ,'Password' VARCHAR NOT NULL ,'Avatar' BLOB,'Rank_id' INTEGER NOT NULL );");
         db.execSQL("CREATE TABLE 'User_has_Course' ('User_id' INTEGER NOT NULL , 'Course_id' INTEGER NOT NULL , PRIMARY KEY ('User_id', 'Course_id'));");
 
-        // default inserts
+        // insert ranks
         db.execSQL("INSERT INTO 'Rank' VALUES(1,'School');");
         db.execSQL("INSERT INTO 'Rank' VALUES(2,'Teacher');");
         db.execSQL("INSERT INTO 'Rank' VALUES(3,'Student');");
+
+        // default users
         db.execSQL("INSERT INTO 'User' VALUES(1,'SchoolDefault','Default',NULL,1);");
         db.execSQL("INSERT INTO 'User' VALUES(2,'TeacherDefault','Default',NULL,2);");
         db.execSQL("INSERT INTO 'User' VALUES(3,'StudentDefault','Default',NULL,3);");
+
+        // default comments
+        db.execSQL("INSERT INTO 'Comment' VALUES(1,'It''s just programming, but functional.',1,2,'2017-11-14 16:12:30');");
+        db.execSQL("INSERT INTO 'Comment' VALUES(2,'Oh, ok.',1,3,'2017-11-14 16:15:45');");
+        db.execSQL("INSERT INTO 'Comment' VALUES(3,'Soon',2,2,'2017-11-14 16:52:13');");
+        db.execSQL("INSERT INTO 'Comment' VALUES(5,'1st building, 2nd floor, just around the corner',3,2,'2017-11-14 16:57:43');");
+        db.execSQL("INSERT INTO 'Comment' VALUES(6,'Ok thank you!',3,3,'2017-11-14 16:57:56');");
+
+        // default courses
+        db.execSQL("INSERT INTO 'Course' VALUES(1,'Modeling');");
+        db.execSQL("INSERT INTO 'Course' VALUES(2,'Functional programming');");
+        db.execSQL("INSERT INTO 'Course' VALUES(3,'Declarative programming');");
+        db.execSQL("INSERT INTO 'Course' VALUES(4,'Project management');");
+
+        // default posts
+        db.execSQL("INSERT INTO 'Post' VALUES(1,'What is functional programming','What is this course actually?','False','True','False',3,2,'2017-11-14 16:10:49');");
+        db.execSQL("INSERT INTO 'Post' VALUES(2,'Course start?','When will the course start?','True','False','False',3,2,'2017-11-14 16:11:18');");
+        db.execSQL("INSERT INTO 'Post' VALUES(3,'Can''t find classroom!','HELP I can''t find the classroom!','False','False','True',3,2,'2017-11-14 16:11:28');");
+
+        // default user-course links
+        db.execSQL("INSERT INTO 'User_has_Course' VALUES(2,1);");
+        db.execSQL("INSERT INTO 'User_has_Course' VALUES(2,2);");
+        db.execSQL("INSERT INTO 'User_has_Course' VALUES(2,3);");
+        db.execSQL("INSERT INTO 'User_has_Course' VALUES(2,4);");
+        db.execSQL("INSERT INTO 'User_has_Course' VALUES(3,1);");
+        db.execSQL("INSERT INTO 'User_has_Course' VALUES(3,2);");
+        db.execSQL("INSERT INTO 'User_has_Course' VALUES(3,3);");
+        db.execSQL("INSERT INTO 'User_has_Course' VALUES(3,4);");
+
     }
 
     @Override
@@ -175,7 +213,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
 
             // create user
-            CurrentUser.user =  new User(cursor.getString(0), cursor.getBlob(1), realRank);
+            CurrentUser=  new User(cursor.getString(0), cursor.getBlob(1), realRank);
 
             // release cursor
             cursor.close();
@@ -193,7 +231,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static class UpdateUser {
         private static boolean generalUpdate(ContentValues values){
             // get username
-            String username = DatabaseUtils.sqlEscapeString(CurrentUser.user.Username);
+            String username = DatabaseUtils.sqlEscapeString(CurrentUser.Username);
 
             SQLiteDatabase db = ourInstance.getWritableDatabase();
 
@@ -230,7 +268,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             generalUpdate(values);
 
             // also change on current user
-            CurrentUser.user.Avatar = newAvatar;
+            CurrentUser.Avatar = newAvatar;
         }
 
         /**

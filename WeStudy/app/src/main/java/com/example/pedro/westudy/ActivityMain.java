@@ -2,6 +2,7 @@ package com.example.pedro.westudy;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,8 +13,9 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import statics.CurrentUser;
 import statics.DatabaseHelper;
+
+import static statics.DatabaseHelper.CurrentUser;
 
 public class ActivityMain extends AppCompatActivity {
     // ---------------------------------------------------- Options for testing!!!
@@ -52,7 +54,7 @@ public class ActivityMain extends AppCompatActivity {
         DatabaseHelper.instantiate(getBaseContext());
 
         // reset user
-        CurrentUser.reset();
+        DatabaseHelper.resetCurrentUser();
 
         // set normal controls
         etUsername = findViewById(R.id.content_main_etUsername);
@@ -126,34 +128,52 @@ public class ActivityMain extends AppCompatActivity {
 
         if (DatabaseHelper.tryLogin(etUsername.getText().toString(), etPassword.getText().toString())){
             // check user & set home
-            switch (CurrentUser.user.Rank){
+            switch (CurrentUser.Rank){
                 case Student:
                     Log.d(LOG_TAG, "Recognized as student");
                     MyHome = new Intent(this, ActivityStudentHome.class);
+                    continueLogin(MyHome);
                     break;
 
                 case Teacher:
                     // todo: change to other home
                     Log.d(LOG_TAG, "Recognized as teacher");
-                    MyHome = new Intent(this, ActivityStudentHome.class);
+                    Toast.makeText(this.getBaseContext(), "Homepage for teacher not implemented yet, so going to student home instead.", Toast.LENGTH_LONG).show();
+
+                    final Intent MyHomes = new Intent(this, ActivityStudentHome.class);
+                    new Handler().postDelayed(new Runnable() {
+                        public void run() {
+                            continueLogin(MyHomes);
+                        }
+                    }, 5000);   // 5 seconds wait
+
                     break;
 
                 case School:
                     // todo: change to other home
                     Log.d(LOG_TAG, "Recognized as teacher");
-                    MyHome = new Intent(this, ActivityStudentHome.class);
+                    Toast.makeText(this.getBaseContext(), "Homepage for school not implemented yet, so going to student home instead.", Toast.LENGTH_LONG).show();
+
+                    final Intent MyHomess = new Intent(this, ActivityStudentHome.class);
+                    new Handler().postDelayed(new Runnable() {
+                        public void run() {
+                            continueLogin(MyHomess);
+                        }
+                    }, 5000);   // 5 seconds wait
                     break;
             }
-
-            // say hello
-            Toast.makeText(this.getBaseContext(), "Welcome " + CurrentUser.user.Username, Toast.LENGTH_SHORT).show();
-
-            // go to home
-            startActivity(MyHome);
         }
         else {
             // wrong user
             Toast.makeText(this.getBaseContext(), "Wrong username or password", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void continueLogin(Intent MyHome){
+        // say hello
+        Toast.makeText(this.getBaseContext(), "Welcome " + CurrentUser.Username, Toast.LENGTH_SHORT).show();
+
+        // go to home
+        startActivity(MyHome);
     }
 }
