@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import statics.DatabaseHelper;
 
-import static statics.DatabaseHelper.CurrentUser;
+import static statics.DatabaseHelper.currentUser;
 
 public class ActivityMain extends AppCompatActivity {
     // ---------------------------------------------------- Options for testing!!!
@@ -128,7 +128,7 @@ public class ActivityMain extends AppCompatActivity {
 
         if (DatabaseHelper.tryLogin(etUsername.getText().toString(), etPassword.getText().toString())){
             // check user & set home
-            switch (CurrentUser.Rank){
+            switch (currentUser.Rank){
                 case Student:
                     Log.d(LOG_TAG, "Recognized as student");
                     MyHome = new Intent(this, ActivityStudentHome.class);
@@ -171,7 +171,7 @@ public class ActivityMain extends AppCompatActivity {
 
     private void continueLogin(Intent MyHome){
         // say hello
-        Toast.makeText(this.getBaseContext(), "Welcome " + CurrentUser.Username, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.getBaseContext(), "Welcome " + currentUser.Username, Toast.LENGTH_SHORT).show();
 
         // go to home
         startActivity(MyHome);

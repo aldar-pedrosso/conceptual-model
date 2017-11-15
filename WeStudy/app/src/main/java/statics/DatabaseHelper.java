@@ -9,20 +9,21 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.pedro.westudy.ActivityMain;
+import com.example.pedro.westudy.ActivityStudentCourse;
 
 import java.util.ArrayList;
 
-import objects.User;
+import objects.Post;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = ActivityMain.LOG_TAG_prefix + DatabaseHelper.class.getSimpleName();
 
     // the current user in the application
-    public static User CurrentUser = null;
+    public static objects.User currentUser = null;
 
     // management variables
     private static final String DATABASE_NAME = "WeStudy";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 9;
     private static DatabaseHelper ourInstance = null;
 
     private DatabaseHelper(Context context) {
@@ -38,7 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public static void resetCurrentUser(){
-        CurrentUser = null;
+        currentUser = null;
     }
 
     @Override
@@ -75,9 +76,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO 'Course' VALUES(4,'Project management');");
 
         // default posts
-        db.execSQL("INSERT INTO 'Post' VALUES(1,'What is functional programming','What is this course actually?','False','True','False',3,2,'2017-11-14 16:10:49');");
-        db.execSQL("INSERT INTO 'Post' VALUES(2,'Course start?','When will the course start?','True','False','False',3,2,'2017-11-14 16:11:18');");
-        db.execSQL("INSERT INTO 'Post' VALUES(3,'Can''t find classroom!','HELP I can''t find the classroom!','False','False','True',3,2,'2017-11-14 16:11:28');");
+        db.execSQL("INSERT INTO 'Post' VALUES(1,'What is functional programming?','What is this course actually?',0,1,0,3,2,'2017-11-14 16:10:49');");
+        db.execSQL("INSERT INTO 'Post' VALUES(2,'Course start?','When will the course start?',1,0,0,3,2,'2017-11-14 16:11:18');");
+        db.execSQL("INSERT INTO 'Post' VALUES(3,'Can''t find classroom! I am totally lost on the campus!','Anyone can tell me where to go?',0,0,1,3,2,'2017-11-14 16:11:28');");
 
         // default user-course links
         db.execSQL("INSERT INTO 'User_has_Course' VALUES(2,1);");
@@ -130,11 +131,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Show all users currently in the database.
      * @return list of users
      */
-    public static ArrayList<User> getUsers() {
+    public static ArrayList<objects.User> getUsers() {
         SQLiteDatabase db = ourInstance.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT u.Username, u.Avatar, r.Name FROM User as u INNER JOIN rank as r on u.Rank_id = r.id", null);
 
-        ArrayList<User> result = new ArrayList<>();
+        ArrayList<objects.User> result = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 String rankText = cursor.getString(2);
@@ -156,7 +157,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 }
 
                 // create user
-                User newUser = new User(cursor.getString(0), cursor.getBlob(1), realRank);
+                objects.User newUser = new objects.User(cursor.getString(0), cursor.getBlob(1), realRank);
 
                 // add to list
                 result.add(newUser);
@@ -173,24 +174,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Try to login.
      * @param username The username
      * @param password The password
-     * @return Success / fail, when success the current user will be changed -> CurrentUser.user
+     * @return Success / fail, when success the current user will be changed -> currentUser.user
      */
     public static Boolean tryLogin(String username, String password){
-        // escape special characters, just in case
-        username = DatabaseUtils.sqlEscapeString(username);
-        password = DatabaseUtils.sqlEscapeString(password);
-
         Log.d(LOG_TAG, "try login for user: " + username + ", and password: " + password);
-
-        // set up query (doesn't seem to work with the selectionArgs in db.rawQuery)
-        String myQuery = "SELECT u.Username, u.Avatar, r.Name FROM User as u INNER JOIN rank as r on u.Rank_id = r.id WHERE u.Username = ";
-        myQuery += username;
-        myQuery += " AND u.Password = ";
-        myQuery += password + ";";
 
         // try to get a result from database
         SQLiteDatabase db = ourInstance.getReadableDatabase();
-        Cursor cursor = db.rawQuery(myQuery, null);
+        Cursor cursor = db.rawQuery("SELECT u.Username, u.Avatar, r.Name " +
+                "FROM User as u " +
+                "INNER JOIN rank as r on u.Rank_id = r.id " +
+                "WHERE u.Username = ? " +
+                "AND u.Password = ? ", new String[]{username, password});
 
         // check result
         if (cursor != null && cursor.moveToFirst()) {
@@ -213,7 +208,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
 
             // create user
-            CurrentUser=  new User(cursor.getString(0), cursor.getBlob(1), realRank);
+            currentUser =  new objects.User(cursor.getString(0), cursor.getBlob(1), realRank);
 
             // release cursor
             cursor.close();
@@ -227,11 +222,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // all database code concerning the User
-    public static class UpdateUser {
+    // all database code concerning the current User
+    public static class User {
         private static boolean generalUpdate(ContentValues values){
             // get username
-            String username = DatabaseUtils.sqlEscapeString(CurrentUser.Username);
+            String username = DatabaseUtils.sqlEscapeString(currentUser.Username);
 
             SQLiteDatabase db = ourInstance.getWritableDatabase();
 
@@ -268,7 +263,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             generalUpdate(values);
 
             // also change on current user
-            CurrentUser.Avatar = newAvatar;
+            currentUser.Avatar = newAvatar;
         }
 
         /**
@@ -282,6 +277,81 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // make changes
             generalUpdate(values);
         }
+
+        /**
+         * Ask for all courses that the current user is assigned to
+         * @return a list with all course names, sorted alphabetically
+         */
+        public static ArrayList<String> getCourses(){
+            SQLiteDatabase db = ourInstance.getReadableDatabase();
+
+            // set request query
+            Cursor cursor = db.rawQuery("SELECT c.Name " +
+                    "FROM User AS u " +
+                    "INNER JOIN User_has_Course AS uc ON u.id = uc.User_id " +
+                    "INNER JOIN Course AS c ON c.id = uc.Course_id " +
+                    "WHERE u.Username = ?" +
+                    "ORDER BY c.Name", new String[]{currentUser.Username});
+
+            // get results
+            ArrayList<String> results = new ArrayList<>();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    results.add(cursor.getString(0));
+                } while (cursor.moveToNext());
+            }
+
+            return results;
+        }
+    }
+
+    // all database code concerning the current Course
+    public static class Course{
+        public static ArrayList<Post> getPosts(){
+            SQLiteDatabase db = ourInstance.getReadableDatabase();
+
+            // set request query
+            Cursor cursor = db.rawQuery("SELECT u.Username, p.Title, p.Content, p.Hidden, p.Pinned, p.Requested, p.Time, MAX(cm.Time) AS 'LastComment' " +
+                    "FROM Course AS cs " +
+                    "INNER JOIN User AS u ON u.id = p.User_id " +
+                    "INNER JOIN Post as p ON p.Course_id = cs.id " +
+                    "LEFT OUTER JOIN Comment as cm ON p.id = cm.Post_id " +
+                    "WHERE cs.Name = ? " +
+                    "GROUP BY p.id " +
+                    "ORDER BY p.Pinned DESC, LastComment DESC, p.Time DESC", new String[]{ActivityStudentCourse.currentCourse});
+
+            // get results
+            ArrayList<Post> results = new ArrayList<>();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    Post newPost = new Post();
+                    newPost.creator = cursor.getString(0);
+                    newPost.title = cursor.getString(1);
+                    newPost.content = cursor.getString(2);
+                    newPost.hidden = intToBool(cursor.getInt(3));
+                    newPost.pinned = intToBool(cursor.getInt(4));
+                    newPost.requested = intToBool(cursor.getInt(5));
+                    newPost.timePosted = cursor.getString(6);
+                    newPost.timeLastComment = cursor.getString(7);
+
+                    // only add post to the results if not hidden, or it is hidden while it is from the current user
+                    if (!newPost.hidden || newPost.creator.equals(currentUser.Username))
+                        results.add(newPost);
+                } while (cursor.moveToNext());
+            }
+
+            return results;
+        }
+    }
+
+    /**
+     * Small int to bool converter
+     * @param input
+     * @return True if input > 0, False otherwise
+     */
+    static boolean intToBool(int input){
+        if (input>0)
+            return true;
+        return false;
     }
 }
-

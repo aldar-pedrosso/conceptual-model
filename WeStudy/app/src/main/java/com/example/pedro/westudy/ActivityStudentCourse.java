@@ -3,6 +3,7 @@ package com.example.pedro.westudy;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,47 +17,53 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import objects.AdapterCourse;
+import objects.AdapterPost;
+import objects.Post;
 import statics.DatabaseHelper;
 
-public class ActivityStudentHome extends AppCompatActivity {
+public class ActivityStudentCourse extends AppCompatActivity {
     private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
+
+    // current selected course
+    public static String currentCourse = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_home);
+        setContentView(R.layout.activity_student_course);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // floating action button
-        FloatingActionButton fab = findViewById(R.id.activity_student_home_fabNewCourse);
+        FloatingActionButton fab = findViewById(R.id.activity_student_course_fabNewPost);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getBaseContext(), "Action for adding new course", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Action for adding new post", Toast.LENGTH_SHORT).show();
             }
         });
 
+
+
         // make list adapter
-        final ArrayList<String> myCourses = DatabaseHelper.User.getCourses();
-        AdapterCourse adapter = new AdapterCourse(this, myCourses);
+        final ArrayList<Post> myPosts = DatabaseHelper.Course.getPosts();
+        AdapterPost adapter = new AdapterPost(this, myPosts);
 
         // set listview to adapter
-        ListView listView = findViewById(R.id.activity_student_home_lvCourses);
+        ListView listView = findViewById(R.id.activity_student_course_lvPosts);
         listView.setAdapter(adapter);
 
         // set list item click listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(LOG_TAG, "Open posts of the course '" + myCourses.get(position) + "'");
+                Log.d(LOG_TAG, "Open posts of the course '" + myPosts.get(position) + "'");
 
-                ActivityStudentCourse.currentCourse = myCourses.get(position);
-                Intent ChosenCourse = new Intent(getBaseContext(), ActivityStudentCourse.class);
-                startActivity(ChosenCourse);
+                Toast.makeText(getBaseContext(), myPosts.get(position).title + ", is clicked.", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
 
     @Override
     protected void onResume() {
@@ -99,11 +106,5 @@ public class ActivityStudentHome extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        // don't allow to go back to login activity
-        // super.onBackPressed();
     }
 }

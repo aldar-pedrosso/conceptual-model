@@ -27,7 +27,7 @@ import java.io.InputStream;
 
 import statics.DatabaseHelper;
 
-import static statics.DatabaseHelper.CurrentUser;
+import static statics.DatabaseHelper.currentUser;
 
 public class ActivitySettings extends AppCompatActivity {
     private final String LOG_TAG = ActivityMain.LOG_TAG_prefix +  this.getClass().getSimpleName();
@@ -48,8 +48,8 @@ public class ActivitySettings extends AppCompatActivity {
 
         // get current avatar, if any
         // with help from https://stackoverflow.com/a/9357943
-        if (CurrentUser.Avatar != null){
-            imgAvatar.setImageBitmap(BitmapFactory.decodeByteArray(CurrentUser.Avatar, 0, CurrentUser.Avatar.length));
+        if (currentUser.Avatar != null){
+            imgAvatar.setImageBitmap(BitmapFactory.decodeByteArray(currentUser.Avatar, 0, currentUser.Avatar.length));
         }
 
         // Avatar button action
@@ -99,9 +99,9 @@ public class ActivitySettings extends AppCompatActivity {
                     Log.d(LOG_TAG, "2 given passwords are equal, try to update in database.");
 
                     // update database
-                    DatabaseHelper.UpdateUser.changePassword(pass1);
+                    DatabaseHelper.User.changePassword(pass1);
 
-                    Toast.makeText(getBaseContext(),"Password is updated.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(),"Password is successfully changed.", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     // passwords are not equal
@@ -151,7 +151,7 @@ public class ActivitySettings extends AppCompatActivity {
                         // save avatar to database
                         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                         selectedImage.compress(Bitmap.CompressFormat.PNG, 0, outputStream);
-                        DatabaseHelper.UpdateUser.changeAvatar(outputStream.toByteArray());
+                        DatabaseHelper.User.changeAvatar(outputStream.toByteArray());
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
