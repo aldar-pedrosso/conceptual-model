@@ -40,6 +40,7 @@ public class AdapterPost extends ArrayAdapter<Post> {
             holder.imgPin = convertView.findViewById(R.id.listItem_post_imgPin);
             holder.imgHidden = convertView.findViewById(R.id.listItem_post_imgHidden);
             holder.imgRequested = convertView.findViewById(R.id.listItem_post_imgRequested);
+            holder.tvAmountOfComments = convertView.findViewById(R.id.listItem_post_tvAmountOfComments);
 
             // set tag
             convertView.setTag(holder);
@@ -55,6 +56,7 @@ public class AdapterPost extends ArrayAdapter<Post> {
         // set data
         holder.tvPostName.setText(selectedPost.title);
         holder.tvCreator.setText(selectedPost.creator);
+        holder.tvAmountOfComments.setText("" + selectedPost.amountOfComments);
 
         // if no comments, set time of the post itself
         if (selectedPost.timeLastComment == null || selectedPost.timeLastComment.isEmpty())
@@ -88,5 +90,6 @@ public class AdapterPost extends ArrayAdapter<Post> {
         private ImageView imgPin;
         private ImageView imgHidden;
         private ImageView imgRequested;
+        private TextView tvAmountOfComments;
     }
 }

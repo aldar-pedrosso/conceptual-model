@@ -13,4 +13,5 @@ public class Post {
     public Boolean requested = null;
     public String timePosted = null;
     public String timeLastComment = null;
+    public int amountOfComments = 0;
 }

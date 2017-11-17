@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // management variables
     private static final String DATABASE_NAME = "WeStudy";
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
     private static DatabaseHelper ourInstance = null;
 
     private DatabaseHelper(Context context) {
@@ -78,7 +78,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // default posts
         db.execSQL("INSERT INTO 'Post' VALUES(1,'What is functional programming?','What is this course actually?',0,1,0,3,2,'2017-11-14 16:10:49');");
         db.execSQL("INSERT INTO 'Post' VALUES(2,'Course start?','When will the course start?',1,0,0,3,2,'2017-11-14 16:11:18');");
-        db.execSQL("INSERT INTO 'Post' VALUES(3,'Can''t find classroom! I am totally lost on the campus!','Anyone can tell me where to go?',0,0,1,3,2,'2017-11-14 16:11:28');");
+        db.execSQL("INSERT INTO 'Post' VALUES(3,'Can''t find classroom! I am totally lost on the campus! What am I supposed to do!','Anyone can tell me where to go?',0,0,1,3,2,'2017-11-14 16:11:28');");
 
         // default user-course links
         db.execSQL("INSERT INTO 'User_has_Course' VALUES(2,1);");
@@ -311,7 +311,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = ourInstance.getReadableDatabase();
 
             // set request query
-            Cursor cursor = db.rawQuery("SELECT u.Username, p.Title, p.Content, p.Hidden, p.Pinned, p.Requested, p.Time, MAX(cm.Time) AS 'LastComment' " +
+            Cursor cursor = db.rawQuery("SELECT u.Username, p.Title, p.Content, p.Hidden, p.Pinned, p.Requested, p.Time, MAX(cm.Time) AS 'LastComment', COUNT (cm.id) AS 'AmountOfComments' " +
                     "FROM Course AS cs " +
                     "INNER JOIN User AS u ON u.id = p.User_id " +
                     "INNER JOIN Post as p ON p.Course_id = cs.id " +
@@ -333,9 +333,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     newPost.requested = intToBool(cursor.getInt(5));
                     newPost.timePosted = cursor.getString(6);
                     newPost.timeLastComment = cursor.getString(7);
+                    newPost.amountOfComments = cursor.getInt(8);
 
-                    // only add post to the results if not hidden, or it is hidden while it is from the current user
-                    if (!newPost.hidden || newPost.creator.equals(currentUser.Username))
+                    // only add post to the results if not hidden,
+                    // or it is hidden while it is from the current user,
+                    // or it is hidden and the current user is a teacher
+                    if (!newPost.hidden || newPost.creator.equals(currentUser.Username) || currentUser.Rank == UserRank.Teacher)
                         results.add(newPost);
                 } while (cursor.moveToNext());
             }

@@ -16,32 +16,49 @@
 
             <ImageView
                 android:id="@+id/listItem_post-imgPin"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width= "@dimen/post_tag_size"
+                android:layout_height="@dimen/post_tag_size"
                 android:src="@drawable/ic_pin"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginRight="@dimen/post_tag_margin"
+                android:layout_marginEnd="@dimen/post_tag_margin"
                 android:visibility="visible"/>
-
             <ImageView
                 android:id="@+id/listItem_post-imgHidden"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width= "@dimen/post_tag_size"
+                android:layout_height="@dimen/post_tag_size"
                 android:layout_toRightOf="@id/listItem_post-imgPin"
                 android:layout_toEndOf="@id/listItem_post-imgPin"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginRight="@dimen/post_tag_margin"
+                android:layout_marginEnd="@dimen/post_tag_margin"
                 android:src="@drawable/ic_hidden"
                 android:visibility="visible" />
-
             <ImageView
                 android:id="@+id/listItem_post-imgRequested"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width= "@dimen/post_tag_size"
+                android:layout_height="@dimen/post_tag_size"
                 android:layout_toRightOf="@id/listItem_post-imgHidden"
                 android:layout_toEndOf="@id/listItem_post-imgHidden"
                 android:src="@drawable/ic_requested"
                 android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/listItem_post-imgComments"
+                android:layout_width= "@dimen/post_tag_size"
+                android:layout_height="@dimen/post_tag_size"
+                android:layout_marginRight="@dimen/post_tag_margin"
+                android:layout_marginEnd="@dimen/post_tag_margin"
+                android:layout_toLeftOf="@id/listItem_post-tvAmountOfComments"
+                android:layout_toStartOf="@id/listItem_post-tvAmountOfComments"
+                android:src="@drawable/ic_add_comment"/>
+            <TextView
+                android:id="@+id/listItem_post-tvAmountOfComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:textSize="15sp"
+                android:text="0"/>
         </RelativeLayout>
 
         <TextView
@@ -59,18 +76,18 @@
             android:id="@+id/listItem_post-tvCreator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Creator"
             android:layout_below="@id/listItem_post-tvPostName"
             android:textSize="15sp"
-            android:maxEms="14"
+            android:ems="10"
             android:ellipsize="end"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/black"
+            android:text="Creator"/>
         <TextView
             android:id="@+id/listItem_post-tvLastUpdatedTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/listItem_post-tvCreator"
-            android:layout_toEndOf="@id/listItem_post-tvCreator"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:textColor="@android:color/black"
             android:textSize="15sp"
             android:layout_alignTop="@id/listItem_post-tvCreator"

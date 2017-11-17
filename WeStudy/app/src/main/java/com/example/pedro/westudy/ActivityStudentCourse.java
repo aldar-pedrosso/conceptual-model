@@ -34,6 +34,9 @@ public class ActivityStudentCourse extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // set title of the course
+        setTitle(currentCourse);
+
         // floating action button
         FloatingActionButton fab = findViewById(R.id.activity_student_course_fabNewPost);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -42,8 +45,6 @@ public class ActivityStudentCourse extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), "Action for adding new post", Toast.LENGTH_SHORT).show();
             }
         });
-
-
 
         // make list adapter
         final ArrayList<Post> myPosts = DatabaseHelper.Course.getPosts();
