@@ -32,11 +32,15 @@
         <activity
             android:name=".ActivityStudentCourse"
             android:label="@string/title_activity_student_course"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ActivityStudentPost"
             android:label="ActivityStudentPost"
-            android:theme="@style/AppTheme.NoActionBar" ></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ActivityStudentComments"
+            android:label="@string/title_activity_student_comments"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

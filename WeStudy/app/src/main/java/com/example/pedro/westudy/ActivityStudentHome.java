@@ -85,8 +85,8 @@ public class ActivityStudentHome extends AppCompatActivity {
             // open settings
             case R.id.menu_item_settings:
                 Log.d(LOG_TAG, "Opening settings");
-                Intent MyHome = new Intent(this, ActivitySettings.class);
-                startActivity(MyHome);
+                Intent mySettings = new Intent(this, ActivitySettings.class);
+                startActivity(mySettings);
                 break;
 
             // flag logout & close

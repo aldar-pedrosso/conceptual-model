@@ -2,4 +2,5 @@
     <string name="app_name">WeStudy</string>
     <string name="title_activity_student_home">Student home</string>
     <string name="title_activity_student_course">ActivityStudentCourse</string>
+    <string name="title_activity_student_comments">ActivityStudentComments</string>
 </resources>

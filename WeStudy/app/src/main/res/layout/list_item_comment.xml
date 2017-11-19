@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_blue_bright">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
+
+            <RelativeLayout
+                android:id="@+id/listItem_comments-rllHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp">
+
+                <ImageView
+                    android:id="@+id/listItem_comments-imgAvatar"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ic_student"
+                    android:layout_marginEnd="10dp" />
+
+                <TextView
+                    android:id="@+id/listItem_comments-tvCreator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:ems="15"
+                    android:ellipsize="end"
+                    android:textColor="@android:color/black"
+                    android:layout_toRightOf="@id/listItem_comments-imgAvatar"
+                    android:layout_toEndOf="@id/listItem_comments-imgAvatar"
+                    android:layout_alignBottom="@id/listItem_comments-imgAvatar"
+                    android:text="Creator"/>
+
+                <ImageView
+                    android:id="@+id/listItem_comments-imgTeacher"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:src="@drawable/ic_teacher"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/listItem_comments-tvContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:layout_below="@id/listItem_comments-rllHeader"
+                android:text="Content"/>
+
+            <TextView
+                android:id="@+id/listItem_comments-tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:layout_below="@id/listItem_comments-tvContent"
+                android:layout_marginTop="10dp"
+                android:text="2017-11-14 16:11:28"/>
+        </RelativeLayout>
+
+
+</RelativeLayout>

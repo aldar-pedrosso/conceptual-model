@@ -9,11 +9,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.pedro.westudy.ActivityMain;
+import com.example.pedro.westudy.ActivityStudentComments;
 import com.example.pedro.westudy.ActivityStudentCourse;
 
 import java.util.ArrayList;
 
+import objects.Comment;
 import objects.Post;
+import objects.User;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = ActivityMain.LOG_TAG_prefix + DatabaseHelper.class.getSimpleName();
@@ -23,7 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // management variables
     private static final String DATABASE_NAME = "WeStudy";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
     private static DatabaseHelper ourInstance = null;
 
     private DatabaseHelper(Context context) {
@@ -307,7 +310,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // all database code concerning the current Course
     public static class Course{
-        public static ArrayList<Post> getPosts(){
+        public static ArrayList<objects.Post> getPosts(){
             SQLiteDatabase db = ourInstance.getReadableDatabase();
 
             // set request query
@@ -321,10 +324,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "ORDER BY p.Pinned DESC, LastComment DESC, p.Time DESC", new String[]{ActivityStudentCourse.currentCourse});
 
             // get results
-            ArrayList<Post> results = new ArrayList<>();
+            ArrayList<objects.Post> results = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    Post newPost = new Post();
+                    objects.Post newPost = new objects.Post();
                     newPost.creator = cursor.getString(0);
                     newPost.title = cursor.getString(1);
                     newPost.content = cursor.getString(2);
@@ -342,6 +345,66 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         results.add(newPost);
                 } while (cursor.moveToNext());
             }
+
+            // release cursor
+            cursor.close();
+
+            return results;
+        }
+    }
+
+    // all database code concerning the current Post
+    public static class Post{
+        public static ArrayList<Comment> getComments(){
+            SQLiteDatabase db = ourInstance.getReadableDatabase();
+
+            // set request query
+            Cursor cursor = db.rawQuery("SELECT u.Username, r.Name, u.Avatar, cm.Content, cm.Time " +
+                    "FROM Post AS p " +
+                    "INNER JOIN Comment AS cm ON cm.Post_id = p.id " +
+                    "INNER JOIN User AS u on u.id = cm.User_id " +
+                    "INNER JOIN Rank AS r on r.id = u.Rank_id " +
+                    "WHERE p.Title = ? " +
+                    "ORDER BY cm.Time ASC", new String[]{ActivityStudentComments.currentPost});
+
+            // get results
+            ArrayList<Comment> results = new ArrayList<>();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String rankText = cursor.getString(1);
+                    UserRank realRank = null;
+
+                    // check rank
+                    switch (rankText) {
+                        case "Student":
+                            realRank = UserRank.Student;
+                            break;
+
+                        case "Teacher":
+                            realRank = UserRank.Teacher;
+                            break;
+
+                        case "School":
+                            realRank = UserRank.School;
+                            break;
+                    }
+
+                    // create user
+                    objects.User newUser = new objects.User(cursor.getString(0), cursor.getBlob(2), realRank);
+
+                    // create comment
+                    Comment newComment = new Comment();
+                    newComment.user = newUser;
+                    newComment.content = cursor.getString(3);
+                    newComment.time = cursor.getString(4);
+
+                    // add result to the list
+                    results.add(newComment);
+                } while (cursor.moveToNext());
+            }
+
+            // release cursor
+            cursor.close();
 
             return results;
         }

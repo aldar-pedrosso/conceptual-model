@@ -16,61 +16,44 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import objects.AdapterCourse;
+import objects.AdapterComment;
 import objects.AdapterPost;
+import objects.Comment;
 import objects.Post;
 import statics.DatabaseHelper;
 
-public class ActivityStudentCourse extends AppCompatActivity {
+public class ActivityStudentComments extends AppCompatActivity {
     private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
 
-    // current selected course
-    public static String currentCourse = null;
+    // current selected post
+    public static String currentPost = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_course);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        setContentView(R.layout.activity_student_comments);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // set title of the course
-        setTitle(currentCourse);
+        setTitle(currentPost);
 
         // floating action button
-        FloatingActionButton fab = findViewById(R.id.activity_student_course_fabNewPost);
+        FloatingActionButton fab = findViewById(R.id.activity_student_comments_fabNewComment);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getBaseContext(), "Action for adding new post", Toast.LENGTH_SHORT).show();
-
-                Intent NewPost = new Intent(getBaseContext(), ActivityStudentPost.class);
-                startActivity(NewPost);
+                Toast.makeText(getBaseContext(), "Action for adding new comment", Toast.LENGTH_SHORT).show();
             }
         });
 
         // make list adapter
-        final ArrayList<Post> myPosts = DatabaseHelper.Course.getPosts();
-        AdapterPost adapter = new AdapterPost(this, myPosts);
+        final ArrayList<Comment> myComments = DatabaseHelper.Post.getComments();
+        AdapterComment adapter = new AdapterComment(this, myComments);
 
         // set listview to adapter
-        ListView listView = findViewById(R.id.activity_student_course_lvPosts);
+        ListView listView = findViewById(R.id.activity_student_comments_lvComments);
         listView.setAdapter(adapter);
-
-        // set list item click listener
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(LOG_TAG, "Opening comments from post: " + myPosts.get(position).title);
-
-                // set current post
-                ActivityStudentComments.currentPost = myPosts.get(position).title;
-
-                // open new activity
-                Intent myComments = new Intent(getBaseContext(), ActivityStudentComments.class);
-                startActivity(myComments);
-            }
-        });
     }
 
     @Override
@@ -96,7 +79,7 @@ public class ActivityStudentCourse extends AppCompatActivity {
         int id = item.getItemId();
 
         // menu actions
-        switch (id){
+        switch (id) {
 
             // flag logout & close
             case R.id.menu_item_logout:
