@@ -43,6 +43,9 @@ public class ActivityStudentCourse extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getBaseContext(), "Action for adding new post", Toast.LENGTH_SHORT).show();
+
+                Intent NewPost = new Intent(getBaseContext(), ActivityStudentPost.class);
+                startActivity(NewPost);
             }
         });
 
@@ -58,7 +61,7 @@ public class ActivityStudentCourse extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(LOG_TAG, "Open posts of the course '" + myPosts.get(position) + "'");
+                Log.d(LOG_TAG, "Open post #" + myPosts.get(position));
 
                 Toast.makeText(getBaseContext(), myPosts.get(position).title + ", is clicked.", Toast.LENGTH_SHORT).show();
             }

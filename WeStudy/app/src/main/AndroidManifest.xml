@@ -33,6 +33,10 @@
             android:name=".ActivityStudentCourse"
             android:label="@string/title_activity_student_course"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".ActivityStudentPost"
+            android:label="ActivityStudentPost"
+            android:theme="@style/AppTheme.NoActionBar" ></activity>
     </application>
 
 </manifest>

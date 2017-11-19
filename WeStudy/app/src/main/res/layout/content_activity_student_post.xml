@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_marginLeft="20px"
+        android:layout_marginRight="20px"
+        android:layout_marginBottom="20px">
+
+
+
+        <RelativeLayout
+            android:id="@+id/layoutTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10px">
+
+            <EditText
+                android:id="@+id/activity_student_post-etTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Title"
+                android:background="#d7efe5"/>
+
+            <CheckBox
+                android:id="@+id/activity_student_post-cbHidden"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hidden"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/activity_student_post-etTitle">
+            </CheckBox>
+
+            <CheckBox
+                android:id="@+id/activity_student_post-cbRequest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Request"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/activity_student_post-cbHidden">
+            </CheckBox>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/layoutContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/layoutTitle"
+            android:background="#d7efe5">
+
+
+            <EditText
+                android:id="@+id/activity_student_post-etContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ems="10"
+                android:hint="Content"
+                android:backgroundTint="@android:color/transparent"
+                android:gravity="top|left"
+                />
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>

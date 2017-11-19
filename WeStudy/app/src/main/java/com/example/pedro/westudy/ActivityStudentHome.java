@@ -91,7 +91,7 @@ public class ActivityStudentHome extends AppCompatActivity {
 
             // flag logout & close
             case R.id.menu_item_logout:
-                Log.d(LOG_TAG, "User loggin out.");
+                Log.d(LOG_TAG, "User logging out.");
 
                 ActivityMain.bolLogOut = true;
                 finish();
