@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_item_requestLogoOff"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_requested_faded"
+        android:visible="true"
+        android:title="Requested"/>
+
+    <item
+        android:id="@+id/menu_item_requestLogoOn"
+        android:orderInCategory="101"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_requested"
+        android:visible="true"
+        android:title="Requested"/>
+
+    <item
+        android:id="@+id/menu_item_requestToggle"
+        android:orderInCategory="102"
+        app:showAsAction="always"
+        app:actionLayout="@layout/switch_item"
+        android:title="Request"/>
+
+
+    <item
+        android:id="@+id/menu_item_logout"
+        android:orderInCategory="1000"
+        app:showAsAction="collapseActionView"
+        android:title="Log out"/>
+</menu>

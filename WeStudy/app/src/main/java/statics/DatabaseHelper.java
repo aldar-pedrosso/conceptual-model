@@ -26,7 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // management variables
     private static final String DATABASE_NAME = "WeStudy";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
     private static DatabaseHelper ourInstance = null;
 
     private DatabaseHelper(Context context) {
@@ -314,9 +314,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = ourInstance.getReadableDatabase();
 
             // set request query
-            Cursor cursor = db.rawQuery("SELECT u.Username, p.Title, p.Content, p.Hidden, p.Pinned, p.Requested, p.Time, MAX(cm.Time) AS 'LastComment', COUNT (cm.id) AS 'AmountOfComments' " +
+            Cursor cursor = db.rawQuery("SELECT u.Username, r.Name, u.Avatar, p.Title, p.Content, p.Hidden, p.Pinned, p.Requested, p.Time, MAX(cm.Time) AS 'LastComment', COUNT (cm.id) AS 'AmountOfComments' " +
                     "FROM Course AS cs " +
                     "INNER JOIN User AS u ON u.id = p.User_id " +
+                    "INNER JOIN Rank AS r on r.id = u.Rank_id " +
                     "INNER JOIN Post as p ON p.Course_id = cs.id " +
                     "LEFT OUTER JOIN Comment as cm ON p.id = cm.Post_id " +
                     "WHERE cs.Name = ? " +
@@ -327,16 +328,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ArrayList<objects.Post> results = new ArrayList<>();
             if (cursor != null && cursor.moveToFirst()) {
                 do {
+                    String rankText = cursor.getString(1);
+                    UserRank realRank = null;
+
+                    // check rank
+                    switch (rankText) {
+                        case "Student":
+                            realRank = UserRank.Student;
+                            break;
+
+                        case "Teacher":
+                            realRank = UserRank.Teacher;
+                            break;
+
+                        case "School":
+                            realRank = UserRank.School;
+                            break;
+                    }
+
+                    // create user
+                    objects.User newUser = new objects.User(cursor.getString(0), cursor.getBlob(2), realRank);
+
                     objects.Post newPost = new objects.Post();
                     newPost.creator = cursor.getString(0);
-                    newPost.title = cursor.getString(1);
-                    newPost.content = cursor.getString(2);
-                    newPost.hidden = intToBool(cursor.getInt(3));
-                    newPost.pinned = intToBool(cursor.getInt(4));
-                    newPost.requested = intToBool(cursor.getInt(5));
-                    newPost.timePosted = cursor.getString(6);
-                    newPost.timeLastComment = cursor.getString(7);
-                    newPost.amountOfComments = cursor.getInt(8);
+                    newPost.user = newUser;
+                    newPost.title = cursor.getString(3);
+                    newPost.content = cursor.getString(4);
+                    newPost.hidden = intToBool(cursor.getInt(5));
+                    newPost.pinned = intToBool(cursor.getInt(6));
+                    newPost.requested = intToBool(cursor.getInt(7));
+                    newPost.timePosted = cursor.getString(8);
+                    newPost.timeLastComment = cursor.getString(9);
+                    newPost.amountOfComments = cursor.getInt(10);
 
                     // only add post to the results if not hidden,
                     // or it is hidden while it is from the current user,
@@ -355,6 +378,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // all database code concerning the current Post
     public static class Post{
+        /**
+         * Get all the comments for the current post
+         * @return a list with comments
+         */
         public static ArrayList<Comment> getComments(){
             SQLiteDatabase db = ourInstance.getReadableDatabase();
 
@@ -365,7 +392,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "INNER JOIN User AS u on u.id = cm.User_id " +
                     "INNER JOIN Rank AS r on r.id = u.Rank_id " +
                     "WHERE p.Title = ? " +
-                    "ORDER BY cm.Time ASC", new String[]{ActivityStudentComments.currentPost});
+                    "ORDER BY cm.Time ASC", new String[]{ActivityStudentComments.currentPost.title});
 
             // get results
             ArrayList<Comment> results = new ArrayList<>();
@@ -407,6 +434,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
 
             return results;
+        }
+
+        private static boolean generalUpdate(ContentValues values){
+            SQLiteDatabase db = ourInstance.getWritableDatabase();
+
+            // updating row
+            int result = db.update("Post", values, "Title = ?", new String[]{ActivityStudentComments.currentPost.title});
+
+            // check result
+            switch (result){
+                case 1:
+                    Log.d(LOG_TAG,"Update successful!");
+                    return true;
+
+                case 0:
+                    Log.d(LOG_TAG,"Update failed!");
+                    break;
+
+                default:
+                    Log.d(LOG_TAG,"Something went wrong, multiple rows got updated!!!");
+                    break;
+            }
+
+            return false;
+        }
+
+        /**
+         * check the current requested value & update in database
+         */
+        public static void updateRequest(){
+            String result = "";
+
+            if (ActivityStudentComments.currentPost.requested)
+                result="1";
+            else
+                result="0";
+
+            // update
+            ContentValues values = new ContentValues();
+            values.put("Requested", result);
+            generalUpdate(values);
         }
     }
 

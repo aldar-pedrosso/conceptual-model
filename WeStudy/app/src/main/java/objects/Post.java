@@ -5,6 +5,7 @@ package objects;
  */
 
 public class Post {
+    public User user = null;
     public String creator = null;
     public String title = null;
     public String content = null;

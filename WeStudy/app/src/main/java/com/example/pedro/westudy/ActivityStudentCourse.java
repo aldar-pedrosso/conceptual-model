@@ -23,6 +23,7 @@ import statics.DatabaseHelper;
 
 public class ActivityStudentCourse extends AppCompatActivity {
     private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
+    public static boolean updatePending = false;
 
     // current selected course
     public static String currentCourse = null;
@@ -64,7 +65,7 @@ public class ActivityStudentCourse extends AppCompatActivity {
                 Log.d(LOG_TAG, "Opening comments from post: " + myPosts.get(position).title);
 
                 // set current post
-                ActivityStudentComments.currentPost = myPosts.get(position).title;
+                ActivityStudentComments.currentPost = myPosts.get(position);
 
                 // open new activity
                 Intent myComments = new Intent(getBaseContext(), ActivityStudentComments.class);
@@ -81,6 +82,16 @@ public class ActivityStudentCourse extends AppCompatActivity {
         if (ActivityMain.bolLogOut){
             Log.d(LOG_TAG, "Logged out, redirect to previous activity");
             finish();
+        }
+        else{
+
+            // refresh activity if updates here
+            if (updatePending){
+                finish();
+                startActivity(getIntent());
+
+                updatePending = false;
+            }
         }
     }
 
