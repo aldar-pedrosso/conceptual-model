@@ -8,9 +8,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
-        android:layout_marginLeft="20px"
-        android:layout_marginRight="20px"
-        android:layout_marginBottom="20px">
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="20dp">
 
 
 
@@ -19,11 +19,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10px">
+            android:layout_marginTop="10dp">
 
             <EditText
                 android:id="@+id/activity_student_post-etTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="Title"
@@ -63,8 +63,7 @@
                 android:ems="10"
                 android:hint="Content"
                 android:backgroundTint="@android:color/transparent"
-                android:gravity="top|left"
-                />
+                android:gravity="top|left"/>
         </RelativeLayout>
 
 
