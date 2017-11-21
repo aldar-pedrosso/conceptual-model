@@ -13,6 +13,8 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.pedro.westudy.student.ActivityStudentHome;
+
 import statics.DatabaseHelper;
 
 import static statics.DatabaseHelper.currentUser;

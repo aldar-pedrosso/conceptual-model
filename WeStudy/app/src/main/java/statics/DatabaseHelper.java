@@ -9,14 +9,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.pedro.westudy.ActivityMain;
-import com.example.pedro.westudy.ActivityStudentComments;
-import com.example.pedro.westudy.ActivityStudentCourse;
+import com.example.pedro.westudy.student.ActivityStudentComments;
+import com.example.pedro.westudy.student.ActivityStudentCourse;
 
 import java.util.ArrayList;
 
 import objects.Comment;
-import objects.Post;
-import objects.User;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = ActivityMain.LOG_TAG_prefix + DatabaseHelper.class.getSimpleName();

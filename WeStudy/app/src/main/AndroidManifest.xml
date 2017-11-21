@@ -23,23 +23,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ActivityStudentHome"
+            android:name=".student.ActivityStudentHome"
             android:label="@string/title_activity_student_home"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ActivitySettings"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".ActivityStudentCourse"
+            android:name=".student.ActivityStudentCourse"
             android:label="@string/title_activity_student_course"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ActivityStudentPost"
+            android:name=".student.ActivityStudentPost"
             android:label="ActivityStudentPost"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ActivityStudentComments"
+            android:name=".student.ActivityStudentComments"
             android:label="@string/title_activity_student_comments"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".student.ActivityStudentConfirmLeaving"
+            android:label="ActivityStudentConfirmLeaving"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

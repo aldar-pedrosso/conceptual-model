@@ -1,4 +1,4 @@
-package com.example.pedro.westudy;
+package com.example.pedro.westudy.student;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,47 +13,65 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.pedro.westudy.ActivityMain;
+import com.example.pedro.westudy.ActivitySettings;
+import com.example.pedro.westudy.R;
+
 import java.util.ArrayList;
 
-import objects.AdapterCourse;
+import objects.AdapterPost;
+import objects.Post;
 import statics.DatabaseHelper;
 
-public class ActivityStudentHome extends AppCompatActivity {
+public class ActivityStudentCourse extends AppCompatActivity {
     private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
+    public static boolean updatePending = false;
+
+    // current selected course
+    public static String currentCourse = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_home);
+        setContentView(R.layout.activity_student_course);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // set title of the course
+        setTitle(currentCourse);
+
         // floating action button
-        FloatingActionButton fab = findViewById(R.id.activity_student_home_fabNewCourse);
+        FloatingActionButton fab = findViewById(R.id.activity_student_course_fabNewPost);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getBaseContext(), "Action for adding new course", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Action for adding new post", Toast.LENGTH_SHORT).show();
+
+                Intent NewPost = new Intent(getBaseContext(), ActivityStudentPost.class);
+                startActivity(NewPost);
             }
         });
 
         // make list adapter
-        final ArrayList<String> myCourses = DatabaseHelper.User.getCourses();
-        AdapterCourse adapter = new AdapterCourse(this, myCourses);
+        final ArrayList<Post> myPosts = DatabaseHelper.Course.getPosts();
+        AdapterPost adapter = new AdapterPost(this, myPosts);
 
         // set listview to adapter
-        ListView listView = findViewById(R.id.activity_student_home_lvCourses);
+        ListView listView = findViewById(R.id.activity_student_course_lvPosts);
         listView.setAdapter(adapter);
 
         // set list item click listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(LOG_TAG, "Open posts of the course '" + myCourses.get(position) + "'");
+                Log.d(LOG_TAG, "Opening comments from post: " + myPosts.get(position).title);
 
-                ActivityStudentCourse.currentCourse = myCourses.get(position);
-                Intent ChosenCourse = new Intent(getBaseContext(), ActivityStudentCourse.class);
-                startActivity(ChosenCourse);
+                // set current post
+                ActivityStudentComments.currentPost = myPosts.get(position);
+
+                // open new activity
+                Intent myComments = new Intent(getBaseContext(), ActivityStudentComments.class);
+                startActivity(myComments);
             }
         });
     }
@@ -67,12 +85,22 @@ public class ActivityStudentHome extends AppCompatActivity {
             Log.d(LOG_TAG, "Logged out, redirect to previous activity");
             finish();
         }
+        else{
+
+            // refresh activity if updates here
+            if (updatePending){
+                finish();
+                startActivity(getIntent());
+
+                updatePending = false;
+            }
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_home, menu);
+        getMenuInflater().inflate(R.menu.menu_course, menu);
         return true;
     }
 
@@ -82,12 +110,15 @@ public class ActivityStudentHome extends AppCompatActivity {
 
         // menu actions
         switch (id){
-            // open settings
-            case R.id.menu_item_settings:
-                Log.d(LOG_TAG, "Opening settings");
-                Intent mySettings = new Intent(this, ActivitySettings.class);
+
+            // select leave course
+            case R.id.menu_item_leave:
+                Log.d(LOG_TAG, "User tries to leave the course.");
+                Intent mySettings = new Intent(this, ActivityStudentConfirmLeaving.class);
                 startActivity(mySettings);
                 break;
+
+
 
             // flag logout & close
             case R.id.menu_item_logout:
@@ -99,11 +130,5 @@ public class ActivityStudentHome extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        // don't allow to go back to login activity
-        // super.onBackPressed();
     }
 }

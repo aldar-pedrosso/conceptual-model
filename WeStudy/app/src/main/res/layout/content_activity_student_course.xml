@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.pedro.westudy.ActivityStudentCourse"
+    tools:context="com.example.pedro.westudy.student.ActivityStudentCourse"
     tools:showIn="@layout/activity_student_course">
 
     <ListView

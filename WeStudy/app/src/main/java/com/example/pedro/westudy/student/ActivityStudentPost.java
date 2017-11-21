@@ -1,4 +1,4 @@
-package com.example.pedro.westudy;
+package com.example.pedro.westudy.student;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.example.pedro.westudy.ActivityMain;
+import com.example.pedro.westudy.R;
 
 /**
  * Created by Aldar on 19-Nov-17.
@@ -46,14 +49,6 @@ public class ActivityStudentPost extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), "Post added", Toast.LENGTH_SHORT).show();
                 Intent intentCourse = new Intent(this, ActivityStudentCourse.class);
                 startActivity(intentCourse);
-                break;
-
-            // Return to home
-            case R.id.menu_item_home:
-                Log.d(LOG_TAG, "Returned to home");
-                Toast.makeText(getBaseContext(), "Returned to home", Toast.LENGTH_SHORT).show();
-                Intent intentHome = new Intent(this, ActivityStudentHome.class);
-                startActivity(intentHome);
                 break;
 
             // flag logout & close

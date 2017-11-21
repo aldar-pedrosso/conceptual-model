@@ -1,4 +1,4 @@
-package com.example.pedro.westudy;
+package com.example.pedro.westudy.student;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import com.example.pedro.westudy.ActivityMain;
+import com.example.pedro.westudy.R;
 
 import java.util.ArrayList;
 
