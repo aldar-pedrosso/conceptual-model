@@ -5,16 +5,43 @@
 
     <item
         android:id="@+id/menu_item_add_post"
-        android:icon="@drawable/ic_add_course"
+        android:icon="@drawable/ic_done"
         android:orderInCategory="100"
-        android:title="Settings"
+        android:title="Add post"
         app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/menu_item_hidden"
+        android:title="Hidden"
+        android:checkable="true"
+        android:orderInCategory="200"
+        app:showAsAction="collapseActionView"/>
+
+    <item
+        android:id="@+id/menu_item_requested"
+        android:title="Requested"
+        android:checkable="true"
+        android:orderInCategory="201"
+        app:showAsAction="collapseActionView"/>
+
+    <item
+        android:id="@+id/menu_item_pinned"
+        android:title="Pinned"
+        android:checkable="true"
+        android:orderInCategory="202"
+        android:visible="true"
+        app:showAsAction="collapseActionView"/>
+
+    <!-- some space between options & log out -->
+    <item
+        android:title=""
+        android:enabled="false"
+        android:orderInCategory="999"
+        app:showAsAction="collapseActionView"/>
 
     <item
         android:id="@+id/menu_item_logout"
         android:orderInCategory="1000"
         android:title="Log out"
-        app:showAsAction="collapseActionView"
-        />
+        app:showAsAction="collapseActionView"/>
 </menu>

@@ -9,8 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.pedro.westudy.ActivityMain;
-import com.example.pedro.westudy.student.ActivityStudentComments;
-import com.example.pedro.westudy.student.ActivityStudentCourse;
+import com.example.pedro.westudy.student.ActivityStudentPostComments;
+import com.example.pedro.westudy.student.ActivityStudentCoursePosts;
 
 import java.util.ArrayList;
 
@@ -320,7 +320,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "LEFT OUTER JOIN Comment as cm ON p.id = cm.Post_id " +
                     "WHERE cs.Name = ? " +
                     "GROUP BY p.id " +
-                    "ORDER BY p.Pinned DESC, LastComment DESC, p.Time DESC", new String[]{ActivityStudentCourse.currentCourse});
+                    "ORDER BY p.Pinned DESC, LastComment DESC, p.Time DESC", new String[]{ActivityStudentCoursePosts.currentCourse});
 
             // get results
             ArrayList<objects.Post> results = new ArrayList<>();
@@ -390,7 +390,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "INNER JOIN User AS u on u.id = cm.User_id " +
                     "INNER JOIN Rank AS r on r.id = u.Rank_id " +
                     "WHERE p.Title = ? " +
-                    "ORDER BY cm.Time ASC", new String[]{ActivityStudentComments.currentPost.title});
+                    "ORDER BY cm.Time ASC", new String[]{ActivityStudentPostComments.currentPost.title});
 
             // get results
             ArrayList<Comment> results = new ArrayList<>();
@@ -438,7 +438,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = ourInstance.getWritableDatabase();
 
             // updating row
-            int result = db.update("Post", values, "Title = ?", new String[]{ActivityStudentComments.currentPost.title});
+            int result = db.update("Post", values, "Title = ?", new String[]{ActivityStudentPostComments.currentPost.title});
 
             // check result
             switch (result){
@@ -464,7 +464,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         public static void updateRequest(){
             String result = "";
 
-            if (ActivityStudentComments.currentPost.requested)
+            if (ActivityStudentPostComments.currentPost.requested)
                 result="1";
             else
                 result="0";

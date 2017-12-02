@@ -1,6 +1,5 @@
 package com.example.pedro.westudy.student;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,19 +8,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pedro.westudy.ActivityMain;
-import com.example.pedro.westudy.ActivitySettings;
 import com.example.pedro.westudy.R;
 
 /**
  * Created by Aldar on 21-Nov-17.
  */
 
-public class ActivityStudentConfirmLeaving extends AppCompatActivity {
+public class ActivityStudentCourseConfirmLeaving extends AppCompatActivity {
 
     private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
 
@@ -49,9 +46,9 @@ public class ActivityStudentConfirmLeaving extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getBaseContext(), "Confirm leaving", Toast.LENGTH_SHORT).show();
-
-                Intent Courses = new Intent(getBaseContext(), ActivityStudentCourse.class);
-                startActivity(Courses);
+                ActivityStudentCoursePosts.courseLeft = true;
+                ActivityStudentHome.updatePending = true;
+                finish();
             }
         });
 
@@ -59,18 +56,12 @@ public class ActivityStudentConfirmLeaving extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getBaseContext(), "Cancel leaving", Toast.LENGTH_SHORT).show();
-
-                Intent Courses = new Intent(getBaseContext(), ActivityStudentCourse.class);
-                startActivity(Courses);
+                finish();
             }
         });
 
-
-
-        txtLabel.setText("Are you sure you want to leave '" + ActivityStudentCourse.currentCourse + "'?");
+        txtLabel.setText("Are you sure you want to leave '" + ActivityStudentCoursePosts.currentCourse + "'?");
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -78,8 +69,6 @@ public class ActivityStudentConfirmLeaving extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_logout, menu);
         return true;
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -22,7 +22,7 @@ import objects.Comment;
 import objects.Post;
 import statics.DatabaseHelper;
 
-public class ActivityStudentComments extends AppCompatActivity {
+public class ActivityStudentPostComments extends AppCompatActivity {
     private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
     public static boolean updatePending = false;
 
@@ -157,6 +157,6 @@ public class ActivityStudentComments extends AppCompatActivity {
         DatabaseHelper.Post.updateRequest();
 
         // toggle update in activity with posts
-        ActivityStudentCourse.updatePending = true;
+        ActivityStudentCoursePosts.updatePending = true;
     }
 }

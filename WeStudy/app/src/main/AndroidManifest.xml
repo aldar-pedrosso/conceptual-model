@@ -30,19 +30,19 @@
             android:name=".ActivitySettings"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".student.ActivityStudentCourse"
+            android:name=".student.ActivityStudentCoursePosts"
             android:label="@string/title_activity_student_course"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".student.ActivityStudentPost"
+            android:name=".ActivityNewPost"
             android:label="ActivityStudentPost"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".student.ActivityStudentComments"
+            android:name=".student.ActivityStudentPostComments"
             android:label="@string/title_activity_student_comments"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".student.ActivityStudentConfirmLeaving"
+            android:name=".student.ActivityStudentCourseConfirmLeaving"
             android:label="ActivityStudentConfirmLeaving"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

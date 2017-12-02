@@ -24,6 +24,7 @@ import statics.DatabaseHelper;
 
 public class ActivityStudentHome extends AppCompatActivity {
     private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
+    public static boolean updatePending = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +56,8 @@ public class ActivityStudentHome extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(LOG_TAG, "Open posts of the course '" + myCourses.get(position) + "'");
 
-                ActivityStudentCourse.currentCourse = myCourses.get(position);
-                Intent ChosenCourse = new Intent(getBaseContext(), ActivityStudentCourse.class);
+                ActivityStudentCoursePosts.currentCourse = myCourses.get(position);
+                Intent ChosenCourse = new Intent(getBaseContext(), ActivityStudentCoursePosts.class);
                 startActivity(ChosenCourse);
             }
         });
@@ -70,6 +71,13 @@ public class ActivityStudentHome extends AppCompatActivity {
         if (ActivityMain.bolLogOut){
             Log.d(LOG_TAG, "Logged out, redirect to previous activity");
             finish();
+        }
+        else if (updatePending) {
+            // refresh activity if updates here
+            finish();
+            startActivity(getIntent());
+
+            updatePending = false;
         }
     }
 

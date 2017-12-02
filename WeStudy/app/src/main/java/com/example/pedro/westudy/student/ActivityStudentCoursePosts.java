@@ -11,10 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.pedro.westudy.ActivityMain;
-import com.example.pedro.westudy.ActivitySettings;
+import com.example.pedro.westudy.ActivityNewPost;
 import com.example.pedro.westudy.R;
 
 import java.util.ArrayList;
@@ -23,9 +22,10 @@ import objects.AdapterPost;
 import objects.Post;
 import statics.DatabaseHelper;
 
-public class ActivityStudentCourse extends AppCompatActivity {
+public class ActivityStudentCoursePosts extends AppCompatActivity {
     private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
     public static boolean updatePending = false;
+    public static boolean courseLeft = false;
 
     // current selected course
     public static String currentCourse = null;
@@ -40,14 +40,13 @@ public class ActivityStudentCourse extends AppCompatActivity {
         // set title of the course
         setTitle(currentCourse);
 
-        // floating action button
+        // floating action button for adding new post
         FloatingActionButton fab = findViewById(R.id.activity_student_course_fabNewPost);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getBaseContext(), "Action for adding new post", Toast.LENGTH_SHORT).show();
-
-                Intent NewPost = new Intent(getBaseContext(), ActivityStudentPost.class);
+                Log.d(LOG_TAG, "Open view for new post.");
+                Intent NewPost = new Intent(getBaseContext(), ActivityNewPost.class);
                 startActivity(NewPost);
             }
         });
@@ -67,10 +66,10 @@ public class ActivityStudentCourse extends AppCompatActivity {
                 Log.d(LOG_TAG, "Opening comments from post: " + myPosts.get(position).title);
 
                 // set current post
-                ActivityStudentComments.currentPost = myPosts.get(position);
+                ActivityStudentPostComments.currentPost = myPosts.get(position);
 
                 // open new activity
-                Intent myComments = new Intent(getBaseContext(), ActivityStudentComments.class);
+                Intent myComments = new Intent(getBaseContext(), ActivityStudentPostComments.class);
                 startActivity(myComments);
             }
         });
@@ -81,19 +80,22 @@ public class ActivityStudentCourse extends AppCompatActivity {
         super.onResume();
 
         // check if user logged out
-        if (ActivityMain.bolLogOut){
+        if (ActivityMain.bolLogOut) {
             Log.d(LOG_TAG, "Logged out, redirect to previous activity");
             finish();
-        }
-        else{
+        } else if (courseLeft) {
+            Log.d(LOG_TAG, "Course left, redirect to previous activity (home)");
 
+            // reset static field
+            courseLeft = false;
+
+            finish();
+        } else if (updatePending) {
             // refresh activity if updates here
-            if (updatePending){
-                finish();
-                startActivity(getIntent());
+            finish();
+            startActivity(getIntent());
 
-                updatePending = false;
-            }
+            updatePending = false;
         }
     }
 
@@ -109,16 +111,14 @@ public class ActivityStudentCourse extends AppCompatActivity {
         int id = item.getItemId();
 
         // menu actions
-        switch (id){
+        switch (id) {
 
             // select leave course
             case R.id.menu_item_leave:
                 Log.d(LOG_TAG, "User tries to leave the course.");
-                Intent mySettings = new Intent(this, ActivityStudentConfirmLeaving.class);
+                Intent mySettings = new Intent(this, ActivityStudentCourseConfirmLeaving.class);
                 startActivity(mySettings);
                 break;
-
-
 
             // flag logout & close
             case R.id.menu_item_logout:

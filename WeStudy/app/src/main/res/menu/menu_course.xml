@@ -1,13 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.pedro.westudy.student.ActivityStudentCourse">
+    tools:context="com.example.pedro.westudy.student.ActivityStudentCoursePosts">
 
 
     <item
         android:id="@+id/menu_item_leave"
         android:orderInCategory="500"
-        android:title="Leave"
+        android:title="Leave course"
         app:showAsAction="collapseActionView"
         />
 
