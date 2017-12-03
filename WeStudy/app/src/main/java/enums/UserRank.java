@@ -1,4 +1,4 @@
-package statics;
+package enums;
 
 public enum UserRank {
     Student,

@@ -1,5 +1,6 @@
 package statics;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,9 +13,12 @@ import com.example.pedro.westudy.ActivityMain;
 import com.example.pedro.westudy.student.ActivityStudentPostComments;
 import com.example.pedro.westudy.student.ActivityStudentCoursePosts;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import objects.Comment;
+import enums.UserRank;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String LOG_TAG = ActivityMain.LOG_TAG_prefix + DatabaseHelper.class.getSimpleName();
@@ -24,7 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // management variables
     private static final String DATABASE_NAME = "WeStudy";
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13;
     private static DatabaseHelper ourInstance = null;
 
     private DatabaseHelper(Context context) {
@@ -33,13 +37,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Set up instance for static usage.
+     *
      * @param context basic context -> getBaseContext()
      */
     public static void instantiate(Context context) {
         ourInstance = new DatabaseHelper(context);
     }
 
-    public static void resetCurrentUser(){
+    public static void resetCurrentUser() {
         currentUser = null;
     }
 
@@ -111,6 +116,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * For debugging!
      * Show all tables currently in the database.
      */
+    @SuppressWarnings({"unused", "StringConcatenationInLoop"})
     public static void showTables() {
         SQLiteDatabase db = ourInstance.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'", null);
@@ -124,14 +130,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Log.d(LOG_TAG, "table found: " + line);
 
             } while (cursor.moveToNext());
+
+            cursor.close();
         }
+
+        db.close();
     }
 
     /**
      * For debugging!
      * Show all users currently in the database.
+     *
      * @return list of users
      */
+    @SuppressWarnings("unused")
     public static ArrayList<objects.User> getUsers() {
         SQLiteDatabase db = ourInstance.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT u.Username, u.Avatar, r.Name FROM User as u INNER JOIN rank as r on u.Rank_id = r.id", null);
@@ -163,21 +175,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 // add to list
                 result.add(newUser);
             } while (cursor.moveToNext());
-        }
 
-        // release cursor
-        cursor.close();
+            // release cursor
+            cursor.close();
+        }
 
         return result;
     }
 
     /**
      * Try to login.
+     *
      * @param username The username
      * @param password The password
      * @return Success / fail, when success the current user will be changed -> currentUser.user
      */
-    public static Boolean tryLogin(String username, String password){
+    public static Boolean tryLogin(String username, String password) {
         Log.d(LOG_TAG, "try login for user: " + username + ", and password: " + password);
 
         // try to get a result from database
@@ -209,15 +222,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
 
             // create user
-            currentUser =  new objects.User(cursor.getString(0), cursor.getBlob(1), realRank);
+            currentUser = new objects.User(cursor.getString(0), cursor.getBlob(1), realRank);
 
             // release cursor
             cursor.close();
 
             Log.d(LOG_TAG, "Login success");
             return true;
-        }
-        else{
+        } else {
             Log.d(LOG_TAG, "Login failed");
             return false;
         }
@@ -225,7 +237,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // all database code concerning the current User
     public static class User {
-        private static boolean generalUpdate(ContentValues values){
+        @SuppressWarnings("UnusedReturnValue")
+        private static boolean generalUpdate(ContentValues values) {
             // get username
             String username = DatabaseUtils.sqlEscapeString(currentUser.Username);
 
@@ -234,18 +247,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // updating row
             int result = db.update("User", values, "Username = " + username, null);
 
+            db.close();
+
             // check result
-            switch (result){
+            switch (result) {
                 case 1:
-                    Log.d(LOG_TAG,"Update successful!");
+                    Log.d(LOG_TAG, "Update successful!");
                     return true;
 
                 case 0:
-                    Log.d(LOG_TAG,"Update failed!");
+                    Log.d(LOG_TAG, "Update failed!");
                     break;
 
                 default:
-                    Log.d(LOG_TAG,"Something went wrong, multiple rows got updated!!!");
+                    Log.d(LOG_TAG, "Something went wrong, multiple rows got updated!!!");
                     break;
             }
 
@@ -254,9 +269,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         /**
          * Change avatar for the current user
+         *
          * @param newAvatar The new avatar image object
          */
-        public static void changeAvatar(byte[] newAvatar){
+        public static void changeAvatar(byte[] newAvatar) {
             ContentValues values = new ContentValues();
             values.put("Avatar", newAvatar);
 
@@ -269,9 +285,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         /**
          * Change password for the current user
+         *
          * @param newPassword the new password
          */
-        public static void changePassword(String newPassword){
+        public static void changePassword(String newPassword) {
             ContentValues values = new ContentValues();
             values.put("Password", newPassword);
 
@@ -281,9 +298,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         /**
          * Ask for all courses that the current user is assigned to
+         *
          * @return a list with all course names, sorted alphabetically
          */
-        public static ArrayList<String> getCourses(){
+        public static ArrayList<String> getCourses() {
             SQLiteDatabase db = ourInstance.getReadableDatabase();
 
             // set request query
@@ -300,6 +318,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
                     results.add(cursor.getString(0));
                 } while (cursor.moveToNext());
+                cursor.close();
             }
 
             return results;
@@ -307,8 +326,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // all database code concerning the current Course
-    public static class Course{
-        public static ArrayList<objects.Post> getPosts(){
+    public static class Course {
+        public static ArrayList<objects.Post> getPosts() {
             SQLiteDatabase db = ourInstance.getReadableDatabase();
 
             // set request query
@@ -365,22 +384,68 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     if (!newPost.hidden || newPost.creator.equals(currentUser.Username) || currentUser.Rank == UserRank.Teacher)
                         results.add(newPost);
                 } while (cursor.moveToNext());
+
+                cursor.close();
             }
 
-            // release cursor
-            cursor.close();
 
             return results;
+        }
+
+        /**
+         * Add a post using the current selected course, with the current user
+         *
+         * @param Title     the title of the post.
+         * @param Content   then content of the post.
+         * @param Hidden    hidden post?
+         * @param Requested help requested?
+         * @param Pinned    pinned post?
+         * @return true is succeeded, false if not.
+         */
+        @SuppressLint("SimpleDateFormat")
+        public static void addPost(String Title, String Content, boolean Hidden, boolean Requested, boolean Pinned) {
+            // get data
+            SQLiteDatabase db = ourInstance.getWritableDatabase();
+            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+            // get input as int
+            int hidden = boolToInt(Hidden);
+            int requested = boolToInt(Requested);
+            int pinned = boolToInt(Pinned);
+
+            db.execSQL("INSERT INTO Post (Title, Content, Hidden, Requested, Pinned, Time, User_id, Course_id) " +
+                    "SELECT ?, ?, ?, ?, ?, ?, u.id, c.id " +
+                    "FROM User AS u " +
+                    "LEFT OUTER JOIN Course AS c " +
+                    "WHERE u.Username = ? " +
+                    "AND c.Name = ?",
+                    new Object[]{Title, Content, hidden, requested, pinned, time, currentUser.Username, ActivityStudentCoursePosts.currentCourse});
+
+            db.close();
+        }
+
+        /**
+         * The current user will leave the selected course
+         */
+        public static void leave(){
+            SQLiteDatabase db = ourInstance.getWritableDatabase();
+
+            db.execSQL("DELETE FROM User_has_Course " +
+                    "WHERE User_id = (SELECT id FROM User WHERE Username = ?) " +
+                    "AND Course_id = (SELECT id FROM Course WHERE Name = ?)", new Object[]{currentUser.Username, ActivityStudentCoursePosts.currentCourse});
+
+            db.close();
         }
     }
 
     // all database code concerning the current Post
-    public static class Post{
+    public static class Post {
         /**
          * Get all the comments for the current post
+         *
          * @return a list with comments
          */
-        public static ArrayList<Comment> getComments(){
+        public static ArrayList<Comment> getComments() {
             SQLiteDatabase db = ourInstance.getReadableDatabase();
 
             // set request query
@@ -426,32 +491,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     // add result to the list
                     results.add(newComment);
                 } while (cursor.moveToNext());
+
+                cursor.close();
             }
 
-            // release cursor
-            cursor.close();
 
             return results;
         }
 
-        private static boolean generalUpdate(ContentValues values){
+        @SuppressWarnings("UnusedReturnValue")
+        private static boolean generalUpdate(ContentValues values) {
             SQLiteDatabase db = ourInstance.getWritableDatabase();
 
             // updating row
             int result = db.update("Post", values, "Title = ?", new String[]{ActivityStudentPostComments.currentPost.title});
 
             // check result
-            switch (result){
+            switch (result) {
                 case 1:
-                    Log.d(LOG_TAG,"Update successful!");
+                    Log.d(LOG_TAG, "Update successful!");
                     return true;
 
                 case 0:
-                    Log.d(LOG_TAG,"Update failed!");
+                    Log.d(LOG_TAG, "Update failed!");
                     break;
 
                 default:
-                    Log.d(LOG_TAG,"Something went wrong, multiple rows got updated!!!");
+                    Log.d(LOG_TAG, "Something went wrong, multiple rows got updated!!!");
                     break;
             }
 
@@ -461,13 +527,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         /**
          * check the current requested value & update in database
          */
-        public static void updateRequest(){
-            String result = "";
+        public static void updateRequest() {
+            String result;
 
             if (ActivityStudentPostComments.currentPost.requested)
-                result="1";
+                result = "1";
             else
-                result="0";
+                result = "0";
 
             // update
             ContentValues values = new ContentValues();
@@ -478,12 +544,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Small int to bool converter
-     * @param input
+     *
+     * @param input integer input
      * @return True if input > 0, False otherwise
      */
-    static boolean intToBool(int input){
-        if (input>0)
-            return true;
-        return false;
+    static boolean intToBool(int input) {
+        return input > 0;
+    }
+
+    /**
+     * Small bool to int  converter
+     *
+     * @param input boolean input
+     * @return 1 if true, 0 if false
+     */
+    static int boolToInt(boolean input){
+        if (input)
+            return 1;
+        return 0;
     }
 }

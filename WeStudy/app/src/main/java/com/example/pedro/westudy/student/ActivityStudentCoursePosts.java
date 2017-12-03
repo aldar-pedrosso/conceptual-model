@@ -17,6 +17,7 @@ import com.example.pedro.westudy.ActivityNewPost;
 import com.example.pedro.westudy.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import objects.AdapterPost;
 import objects.Post;
@@ -53,6 +54,8 @@ public class ActivityStudentCoursePosts extends AppCompatActivity {
 
         // make list adapter
         final ArrayList<Post> myPosts = DatabaseHelper.Course.getPosts();
+        Collections.sort(myPosts, Collections.<Post>reverseOrder());
+
         AdapterPost adapter = new AdapterPost(this, myPosts);
 
         // set listview to adapter

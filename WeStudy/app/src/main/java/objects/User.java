@@ -1,6 +1,6 @@
 package objects;
 
-import statics.UserRank;
+import enums.UserRank;
 
 public class User {
     public String Username;

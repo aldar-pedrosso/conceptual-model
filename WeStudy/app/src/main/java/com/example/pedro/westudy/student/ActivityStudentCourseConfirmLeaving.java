@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.example.pedro.westudy.ActivityMain;
 import com.example.pedro.westudy.R;
 
+import statics.DatabaseHelper;
+
 /**
  * Created by Aldar on 21-Nov-17.
  */
@@ -45,9 +47,11 @@ public class ActivityStudentCourseConfirmLeaving extends AppCompatActivity {
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getBaseContext(), "Confirm leaving", Toast.LENGTH_SHORT).show();
                 ActivityStudentCoursePosts.courseLeft = true;
                 ActivityStudentHome.updatePending = true;
+                DatabaseHelper.Course.leave();
+
+                Toast.makeText(getBaseContext(), "Course left", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

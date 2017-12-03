@@ -6,11 +6,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pedro.westudy.student.ActivityStudentCoursePosts;
 
-import statics.UserRank;
+import enums.UserRank;
+import statics.DatabaseHelper;
 
 import static statics.DatabaseHelper.currentUser;
 
@@ -25,6 +27,9 @@ public class ActivityNewPost extends AppCompatActivity {
     private boolean requested = false;
     private boolean pinned = false;
 
+    // controls
+    TextView etTitle, etContent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +38,12 @@ public class ActivityNewPost extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // set title
         setTitle("New post for " + ActivityStudentCoursePosts.currentCourse);
+
+        // set controls
+        etTitle = findViewById(R.id.activity_student_post_etTitle);
+        etContent = findViewById(R.id.activity_student_post_etContent);
     }
 
     @Override
@@ -49,6 +59,7 @@ public class ActivityNewPost extends AppCompatActivity {
             itemPinned.setVisible(true);
         else
             itemPinned.setVisible(false);
+
         return true;
     }
 
@@ -60,7 +71,10 @@ public class ActivityNewPost extends AppCompatActivity {
         switch (id){
             // Add post
             case R.id.menu_item_add_post:
-                Log.d(LOG_TAG, "Post added");
+                // update database
+                DatabaseHelper.Course.addPost(etTitle.getText().toString(), etContent.getText().toString(), hidden, requested, pinned);
+                Log.d(LOG_TAG, "New post added");
+
                 Toast.makeText(getBaseContext(), "Post added", Toast.LENGTH_SHORT).show();
 
                 ActivityStudentCoursePosts.updatePending = true;

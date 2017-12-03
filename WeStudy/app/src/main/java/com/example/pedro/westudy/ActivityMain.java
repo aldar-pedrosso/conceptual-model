@@ -1,5 +1,6 @@
 package com.example.pedro.westudy;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -80,6 +81,7 @@ public class ActivityMain extends AppCompatActivity {
         // todo: easy login data
         // set listeners for easy login
         btnStudent.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
                 etUsername.setText("StudentDefault");
@@ -87,6 +89,7 @@ public class ActivityMain extends AppCompatActivity {
             }
         });
         btnTeacher.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
                 etUsername.setText("TeacherDefault");
@@ -94,6 +97,7 @@ public class ActivityMain extends AppCompatActivity {
             }
         });
         btnSchool.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View v) {
                 etUsername.setText("SchoolDefault");

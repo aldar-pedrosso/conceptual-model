@@ -13,7 +13,7 @@ import com.example.pedro.westudy.R;
 
 import java.util.ArrayList;
 
-import statics.UserRank;
+import enums.UserRank;
 
 import static statics.DatabaseHelper.currentUser;
 
