@@ -4,9 +4,15 @@
     tools:context="com.example.pedro.westudy.ActivityMain">
 
     <item
+        android:id="@+id/menu_item_done"
+        android:icon="@drawable/ic_done"
+        android:orderInCategory="100"
+        android:title="Done"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_item_logout"
         android:orderInCategory="1000"
         android:title="Log out"
-        app:showAsAction="collapseActionView"
-        />
+        app:showAsAction="collapseActionView"/>
 </menu>

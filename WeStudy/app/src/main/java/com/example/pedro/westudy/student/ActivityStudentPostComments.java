@@ -1,5 +1,6 @@
 package com.example.pedro.westudy.student;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -10,9 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.example.pedro.westudy.ActivityMain;
+import com.example.pedro.westudy.ActivityNewComment;
 import com.example.pedro.westudy.R;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import objects.Post;
 import statics.DatabaseHelper;
 
 public class ActivityStudentPostComments extends AppCompatActivity {
-    private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
+    private final String TAG = ActivityMain.TAG_prefix + this.getClass().getSimpleName();
     public static boolean updatePending = false;
 
     // current selected post
@@ -37,7 +38,7 @@ public class ActivityStudentPostComments extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_comments);
+        setContentView(R.layout.activity_student_post_comments);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -45,11 +46,13 @@ public class ActivityStudentPostComments extends AppCompatActivity {
         setTitle(currentPost.title);
 
         // floating action button
-        FloatingActionButton fab = findViewById(R.id.activity_student_comments_fabNewComment);
+        FloatingActionButton fab = findViewById(R.id.activity_student_post_comments_fabNewComment);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getBaseContext(), "Action for adding new comment", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Opening activity for new comment");
+                Intent myNewActivity = new Intent(getBaseContext(), ActivityNewComment.class);
+                startActivity(myNewActivity);
             }
         });
 
@@ -77,11 +80,11 @@ public class ActivityStudentPostComments extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        Log.d(LOG_TAG, "Resume activated");
+        Log.d(TAG, "Resume activated");
 
         // check if user logged out
         if (ActivityMain.bolLogOut){
-            Log.d(LOG_TAG, "Logged out, redirect to previous activity");
+            Log.d(TAG, "Logged out, redirect to previous activity");
             finish();
         }
         else {
@@ -98,7 +101,7 @@ public class ActivityStudentPostComments extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_comments, menu);
+        getMenuInflater().inflate(R.menu.menu_post_comments, menu);
 
         // set menu controls
         MenuItem myItem = menu.findItem(R.id.menu_item_requestToggle);
@@ -133,7 +136,7 @@ public class ActivityStudentPostComments extends AppCompatActivity {
 
             // flag logout & close
             case R.id.menu_item_logout:
-                Log.d(LOG_TAG, "User loggin out.");
+                Log.d(TAG, "User loggin out.");
 
                 ActivityMain.bolLogOut = true;
                 finish();
@@ -144,7 +147,7 @@ public class ActivityStudentPostComments extends AppCompatActivity {
     }
 
     private void changeRequest(Boolean newValue){
-        Log.d(LOG_TAG, "Change requested to: " + newValue);
+        Log.d(TAG, "Change requested to: " + newValue);
 
         // change menu controls
         requestLogoOn.setVisible(newValue);

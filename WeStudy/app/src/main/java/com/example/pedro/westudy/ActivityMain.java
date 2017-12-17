@@ -28,9 +28,9 @@ public class ActivityMain extends AppCompatActivity {
 
     // global variables
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
-    public static final String LOG_TAG_prefix = "EASY-DEBUG ";
+    public static final String TAG_prefix = "EASY-DEBUG ";
 
-    private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
+    private final String TAG = ActivityMain.TAG_prefix + this.getClass().getSimpleName();
 
     // check if 'log-out' was pressed
     public static boolean bolLogOut = false;
@@ -42,6 +42,7 @@ public class ActivityMain extends AppCompatActivity {
 
     // special controls on screen
     RelativeLayout rllEasyLogin;
+    ImageButton btnReset;
     ImageButton btnStudent;
     ImageButton btnTeacher;
     ImageButton btnSchool;
@@ -74,11 +75,20 @@ public class ActivityMain extends AppCompatActivity {
 
         // set special controls for easy login
         rllEasyLogin = findViewById(R.id.content_main_rllEasyLogin);
+        btnReset = findViewById(R.id.content_main_btnReset);
         btnStudent = findViewById(R.id.content_main_btnStudent);
         btnTeacher = findViewById(R.id.content_main_btnTeacher);
         btnSchool = findViewById(R.id.content_main_btnSchool);
 
         // todo: easy login data
+        btnReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseHelper.resetDatabase();
+                Log.d(TAG, "Database reset.");
+                Toast.makeText(getBaseContext(),"Database has been reset", Toast.LENGTH_SHORT).show();
+            }
+        });
         // set listeners for easy login
         btnStudent.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
@@ -106,10 +116,14 @@ public class ActivityMain extends AppCompatActivity {
         });
 
         // show easy login or not?
-        if (bolShowEasyLogin)
+        if (bolShowEasyLogin){
             rllEasyLogin.setVisibility(View.VISIBLE);
-        else
+            btnReset.setVisibility(View.VISIBLE);
+        }
+        else{
             rllEasyLogin.setVisibility(View.GONE);
+            btnReset.setVisibility(View.GONE);
+        }
     }
 
     // if came back to this activity, check if user logged out
@@ -119,7 +133,7 @@ public class ActivityMain extends AppCompatActivity {
 
         // reset login
         if (bolLogOut){
-            Log.d(LOG_TAG, "Logging out done, resetting data.");
+            Log.d(TAG, "Logging out done, resetting data.");
 
             etUsername.setText("");
             etPassword.setText("");
@@ -136,14 +150,14 @@ public class ActivityMain extends AppCompatActivity {
             // check user & set home
             switch (currentUser.Rank){
                 case Student:
-                    Log.d(LOG_TAG, "Recognized as student");
+                    Log.d(TAG, "Recognized as student");
                     MyHome = new Intent(this, ActivityStudentHome.class);
                     continueLogin(MyHome);
                     break;
 
                 case Teacher:
                     // todo: change to other home
-                    Log.d(LOG_TAG, "Recognized as teacher");
+                    Log.d(TAG, "Recognized as teacher");
                     Toast.makeText(this.getBaseContext(), "Homepage for teacher not implemented yet, so going to student home instead.", Toast.LENGTH_LONG).show();
 
                     final Intent MyHomes = new Intent(this, ActivityStudentHome.class);
@@ -157,7 +171,7 @@ public class ActivityMain extends AppCompatActivity {
 
                 case School:
                     // todo: change to other home
-                    Log.d(LOG_TAG, "Recognized as teacher");
+                    Log.d(TAG, "Recognized as teacher");
                     Toast.makeText(this.getBaseContext(), "Homepage for school not implemented yet, so going to student home instead.", Toast.LENGTH_LONG).show();
 
                     final Intent MyHomess = new Intent(this, ActivityStudentHome.class);

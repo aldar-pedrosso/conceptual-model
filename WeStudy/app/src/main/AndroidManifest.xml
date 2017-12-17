@@ -40,10 +40,18 @@
         <activity
             android:name=".student.ActivityStudentPostComments"
             android:label="@string/title_activity_student_comments"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".student.ActivityStudentCourseConfirmLeaving"
             android:label="ActivityStudentConfirmLeaving"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ActivityNewComment"
+            android:label="@string/title_activity_new_comment"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ActivityJoinCourse"
+            android:label="@string/title_activity_join_course"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

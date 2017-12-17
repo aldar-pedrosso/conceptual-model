@@ -4,10 +4,10 @@
     tools:context="com.example.pedro.westudy.ActivityMain">
 
     <item
-        android:id="@+id/menu_item_add_post"
+        android:id="@+id/menu_item_done"
         android:icon="@drawable/ic_done"
         android:orderInCategory="100"
-        android:title="Add post"
+        android:title="Done"
         app:showAsAction="ifRoom" />
 
     <item

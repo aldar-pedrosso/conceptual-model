@@ -21,7 +21,7 @@ import static statics.DatabaseHelper.currentUser;
  */
 
 public class ActivityNewPost extends AppCompatActivity {
-    private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
+    private final String TAG = ActivityMain.TAG_prefix + this.getClass().getSimpleName();
 
     private boolean hidden = false;
     private boolean requested = false;
@@ -34,31 +34,36 @@ public class ActivityNewPost extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_student_post);
+        setContentView(R.layout.activity_new_post);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // set title
-        setTitle("New post for " + ActivityStudentCoursePosts.currentCourse);
+        setTitle("New post");
 
         // set controls
-        etTitle = findViewById(R.id.activity_student_post_etTitle);
-        etContent = findViewById(R.id.activity_student_post_etContent);
+        etTitle = findViewById(R.id.activity_new_post_etTitle);
+        etContent = findViewById(R.id.activity_new_post_etContent);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_post, menu);
+        getMenuInflater().inflate(R.menu.menu_new_post, menu);
 
         // get pinned item
         MenuItem itemPinned = menu.findItem(R.id.menu_item_pinned);
+        MenuItem itemHidden = menu.findItem(R.id.menu_item_hidden);
 
         // set visibility for pinned
-        if (currentUser.Rank == UserRank.Teacher)
+        if (currentUser.Rank == UserRank.Teacher){
             itemPinned.setVisible(true);
-        else
+            itemHidden.setVisible(false);
+        }
+        else{
             itemPinned.setVisible(false);
+            itemHidden.setVisible(true);
+        }
 
         return true;
     }
@@ -70,10 +75,10 @@ public class ActivityNewPost extends AppCompatActivity {
         // menu actions
         switch (id){
             // Add post
-            case R.id.menu_item_add_post:
+            case R.id.menu_item_done:
                 // update database
                 DatabaseHelper.Course.addPost(etTitle.getText().toString(), etContent.getText().toString(), hidden, requested, pinned);
-                Log.d(LOG_TAG, "New post added");
+                Log.d(TAG, "New post added");
 
                 Toast.makeText(getBaseContext(), "Post added", Toast.LENGTH_SHORT).show();
 
@@ -84,27 +89,27 @@ public class ActivityNewPost extends AppCompatActivity {
             // toggle hidden
             case R.id.menu_item_hidden:
                 hidden = !hidden;
-                Log.d(LOG_TAG, "Changed option hidden to: " + hidden);
+                Log.d(TAG, "Changed option hidden to: " + hidden);
                 item.setChecked(hidden);
                 break;
 
             // toggle hidden
             case R.id.menu_item_requested:
                 requested = !requested;
-                Log.d(LOG_TAG, "Changed option requested to: " + requested);
+                Log.d(TAG, "Changed option requested to: " + requested);
                 item.setChecked(requested);
                 break;
 
             // toggle hidden
             case R.id.menu_item_pinned:
                 pinned = !pinned;
-                Log.d(LOG_TAG, "Changed option pinned to: " + pinned);
+                Log.d(TAG, "Changed option pinned to: " + pinned);
                 item.setChecked(pinned);
                 break;
 
             // flag logout & close
             case R.id.menu_item_logout:
-                Log.d(LOG_TAG, "User logging out.");
+                Log.d(TAG, "User logging out.");
                 Toast.makeText(getBaseContext(), "Logging out", Toast.LENGTH_SHORT).show();
 
                 ActivityMain.bolLogOut = true;
@@ -117,7 +122,8 @@ public class ActivityNewPost extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Toast.makeText(getBaseContext(), "Cancelling a new post", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getBaseContext(), "Cancelling new post", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "Cancelling new post.");
         finish();
     }
 }

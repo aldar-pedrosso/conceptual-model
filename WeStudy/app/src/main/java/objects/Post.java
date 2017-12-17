@@ -8,6 +8,7 @@ import android.util.Log;
  */
 
 public class Post implements Comparable{
+    public int id = 0;
     public User user = null;
     public String creator = null;
     public String title = null;

@@ -21,14 +21,14 @@ import objects.Comment;
 import enums.UserRank;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    private static final String LOG_TAG = ActivityMain.LOG_TAG_prefix + DatabaseHelper.class.getSimpleName();
+    private static final String TAG = ActivityMain.TAG_prefix + DatabaseHelper.class.getSimpleName();
 
     // the current user in the application
     public static objects.User currentUser = null;
 
     // management variables
     private static final String DATABASE_NAME = "WeStudy";
-    private static final int DATABASE_VERSION = 13;
+    private static final int DATABASE_VERSION = 15;
     private static DatabaseHelper ourInstance = null;
 
     private DatabaseHelper(Context context) {
@@ -50,6 +50,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // drop old tables
+        db.execSQL("DROP TABLE IF EXISTS 'Comment';");
+        db.execSQL("DROP TABLE IF EXISTS 'Course';");
+        db.execSQL("DROP TABLE IF EXISTS 'Post';");
+        db.execSQL("DROP TABLE IF EXISTS 'Rank';");
+        db.execSQL("DROP TABLE IF EXISTS 'User';");
+        db.execSQL("DROP TABLE IF EXISTS 'User_has_Course';");
+
         // default database structure
         db.execSQL("CREATE TABLE 'Comment' ('id' INTEGER PRIMARY KEY  AUTOINCREMENT NOT NULL , 'Content' VARCHAR NOT NULL , 'Post_id' INTEGER NOT NULL , 'User_id' INTEGER NOT NULL , 'Time' DATETIME NOT NULL  DEFAULT (CURRENT_TIMESTAMP));");
         db.execSQL("CREATE TABLE 'Course' ('id' INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , 'Name' VARCHAR NOT NULL );");
@@ -95,21 +103,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO 'User_has_Course' VALUES(3,2);");
         db.execSQL("INSERT INTO 'User_has_Course' VALUES(3,3);");
         db.execSQL("INSERT INTO 'User_has_Course' VALUES(3,4);");
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // drop old tables
-        db.execSQL("DROP TABLE IF EXISTS 'Comment';");
-        db.execSQL("DROP TABLE IF EXISTS 'Course';");
-        db.execSQL("DROP TABLE IF EXISTS 'Post';");
-        db.execSQL("DROP TABLE IF EXISTS 'Rank';");
-        db.execSQL("DROP TABLE IF EXISTS 'User';");
-        db.execSQL("DROP TABLE IF EXISTS 'User_has_Course';");
-
         // remake tables
         onCreate(db);
+    }
+
+    /**
+     * Reset database
+     */
+    public static void resetDatabase(){
+        ourInstance.onCreate(ourInstance.getWritableDatabase());
     }
 
     /**
@@ -127,7 +133,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 for (int i = 1; i < cursor.getColumnCount(); i++) {
                     line += " | " + cursor.getString(i);
                 }
-                Log.d(LOG_TAG, "table found: " + line);
+                Log.d(TAG, "table found: " + line);
 
             } while (cursor.moveToNext());
 
@@ -191,7 +197,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return Success / fail, when success the current user will be changed -> currentUser.user
      */
     public static Boolean tryLogin(String username, String password) {
-        Log.d(LOG_TAG, "try login for user: " + username + ", and password: " + password);
+        Log.d(TAG, "try login for user: " + username + ", and password: " + password);
 
         // try to get a result from database
         SQLiteDatabase db = ourInstance.getReadableDatabase();
@@ -227,10 +233,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // release cursor
             cursor.close();
 
-            Log.d(LOG_TAG, "Login success");
+            Log.d(TAG, "Login success");
             return true;
         } else {
-            Log.d(LOG_TAG, "Login failed");
+            Log.d(TAG, "Login failed");
             return false;
         }
     }
@@ -252,15 +258,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // check result
             switch (result) {
                 case 1:
-                    Log.d(LOG_TAG, "Update successful!");
+                    Log.d(TAG, "Update successful!");
                     return true;
 
                 case 0:
-                    Log.d(LOG_TAG, "Update failed!");
+                    Log.d(TAG, "Update failed!");
                     break;
 
                 default:
-                    Log.d(LOG_TAG, "Something went wrong, multiple rows got updated!!!");
+                    Log.d(TAG, "Something went wrong, multiple rows got updated!!!");
                     break;
             }
 
@@ -323,6 +329,57 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             return results;
         }
+
+        /**
+         * Get a list of courses that the current user is not assigned to, filtered with the given text.
+         * @param Filter The filter text for the search results.
+         * @return
+         */
+        public static ArrayList<String> getNewFilteredCourses(String Filter) {
+            SQLiteDatabase db = ourInstance.getReadableDatabase();
+
+            // check Filter query
+            Filter = DatabaseUtils.sqlEscapeString(Filter);
+            Filter = Filter.substring(1,Filter.length()-1);
+
+            // set request query
+            Cursor cursor = db.rawQuery(
+                    "SELECT Name " +
+                            "FROM Course " +
+                            "WHERE id NOT IN (SELECT uc.Course_id " +
+                            "                    FROM User AS u " +
+                            "                    INNER JOIN User_has_Course AS uc ON u.id = uc.User_id " +
+                            "                    WHERE u.Username = ?) " +
+                            "AND Name LIKE '%" + Filter + "%' " +
+                            "ORDER BY Name", new String[]{currentUser.Username});
+
+            // get results
+            ArrayList<String> results = new ArrayList<>();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    results.add(cursor.getString(0));
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+
+            return results;
+        }
+
+        /**
+         * Add a course to the current user.
+         * @param CourseName The name of the course.
+         */
+        public static void addCourse(String CourseName){
+            SQLiteDatabase db = ourInstance.getWritableDatabase();
+            db.execSQL("INSERT INTO User_has_Course (User_id, Course_id) " +
+                            "SELECT u.id, c.id " +
+                            "FROM User AS u " +
+                            "LEFT OUTER JOIN Course AS c " +
+                            "WHERE u.Username = ? " +
+                            "AND c.Name = ?",
+                    new Object[]{currentUser.Username, CourseName});
+            db.close();
+        }
     }
 
     // all database code concerning the current Course
@@ -331,7 +388,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = ourInstance.getReadableDatabase();
 
             // set request query
-            Cursor cursor = db.rawQuery("SELECT u.Username, r.Name, u.Avatar, p.Title, p.Content, p.Hidden, p.Pinned, p.Requested, p.Time, MAX(cm.Time) AS 'LastComment', COUNT (cm.id) AS 'AmountOfComments' " +
+            Cursor cursor = db.rawQuery("SELECT u.Username, r.Name, u.Avatar, p.id, p.Title, p.Content, p.Hidden, p.Pinned, p.Requested, p.Time, MAX(cm.Time) AS 'LastComment', COUNT (cm.id) AS 'AmountOfComments' " +
                     "FROM Course AS cs " +
                     "INNER JOIN User AS u ON u.id = p.User_id " +
                     "INNER JOIN Rank AS r on r.id = u.Rank_id " +
@@ -369,14 +426,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     objects.Post newPost = new objects.Post();
                     newPost.creator = cursor.getString(0);
                     newPost.user = newUser;
-                    newPost.title = cursor.getString(3);
-                    newPost.content = cursor.getString(4);
-                    newPost.hidden = intToBool(cursor.getInt(5));
-                    newPost.pinned = intToBool(cursor.getInt(6));
-                    newPost.requested = intToBool(cursor.getInt(7));
-                    newPost.timePosted = cursor.getString(8);
-                    newPost.timeLastComment = cursor.getString(9);
-                    newPost.amountOfComments = cursor.getInt(10);
+                    newPost.id = cursor.getInt(3);
+                    newPost.title = cursor.getString(4);
+                    newPost.content = cursor.getString(5);
+                    newPost.hidden = intToBool(cursor.getInt(6));
+                    newPost.pinned = intToBool(cursor.getInt(7));
+                    newPost.requested = intToBool(cursor.getInt(8));
+                    newPost.timePosted = cursor.getString(9);
+                    newPost.timeLastComment = cursor.getString(10);
+                    newPost.amountOfComments = cursor.getInt(11);
 
                     // only add post to the results if not hidden,
                     // or it is hidden while it is from the current user,
@@ -509,15 +567,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // check result
             switch (result) {
                 case 1:
-                    Log.d(LOG_TAG, "Update successful!");
+                    Log.d(TAG, "Update successful!");
                     return true;
 
                 case 0:
-                    Log.d(LOG_TAG, "Update failed!");
+                    Log.d(TAG, "Update failed!");
                     break;
 
                 default:
-                    Log.d(LOG_TAG, "Something went wrong, multiple rows got updated!!!");
+                    Log.d(TAG, "Something went wrong, multiple rows got updated!!!");
                     break;
             }
 
@@ -539,6 +597,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put("Requested", result);
             generalUpdate(values);
+        }
+
+        /**
+         * Add a comment to the current selected post with the current user
+         * @param Content The content of the comment
+         */
+        @SuppressLint("SimpleDateFormat")
+        public static void addComment(String Content) {
+            // get data
+            SQLiteDatabase db = ourInstance.getWritableDatabase();
+            String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+            db.execSQL("INSERT INTO Comment (Content, Time, User_id, Post_id) " +
+                            "SELECT ?, ?, u.id, ? " +
+                            "FROM User AS u " +
+                            "WHERE u.Username = ? ",
+                    new Object[]{Content, time, ActivityStudentPostComments.currentPost.id, currentUser.Username});
+
+            db.close();
         }
     }
 

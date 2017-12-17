@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.pedro.westudy.ActivityNewComment"
+    tools:showIn="@layout/activity_new_comment"
+    android:padding="10dp">
+
+    <RelativeLayout
+        android:id="@+id/layoutContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#d7efe5"
+        android:layout_marginTop="5dp">
+
+        <EditText
+            android:id="@+id/activity_new_comment-etContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ems="10"
+            android:hint="Content"
+            android:backgroundTint="@android:color/transparent"
+            android:gravity="top|start"/>
+    </RelativeLayout>
+
+</RelativeLayout>

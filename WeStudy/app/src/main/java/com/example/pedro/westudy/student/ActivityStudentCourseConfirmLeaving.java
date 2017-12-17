@@ -14,15 +14,12 @@ import android.widget.Toast;
 import com.example.pedro.westudy.ActivityMain;
 import com.example.pedro.westudy.R;
 
-import statics.DatabaseHelper;
-
 /**
  * Created by Aldar on 21-Nov-17.
  */
 
 public class ActivityStudentCourseConfirmLeaving extends AppCompatActivity {
-
-    private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
+    private final String TAG = ActivityMain.TAG_prefix + this.getClass().getSimpleName();
 
     TextView txtLabel;
 
@@ -48,8 +45,6 @@ public class ActivityStudentCourseConfirmLeaving extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ActivityStudentCoursePosts.courseLeft = true;
-                ActivityStudentHome.updatePending = true;
-                DatabaseHelper.Course.leave();
 
                 Toast.makeText(getBaseContext(), "Course left", Toast.LENGTH_SHORT).show();
                 finish();
@@ -70,7 +65,7 @@ public class ActivityStudentCourseConfirmLeaving extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_logout, menu);
+        getMenuInflater().inflate(R.menu.menu_default, menu);
         return true;
     }
 
@@ -83,7 +78,7 @@ public class ActivityStudentCourseConfirmLeaving extends AppCompatActivity {
 
             // flag logout & close
             case R.id.menu_item_logout:
-                Log.d(LOG_TAG, "User logging out.");
+                Log.d(TAG, "User logging out.");
 
                 ActivityMain.bolLogOut = true;
                 finish();

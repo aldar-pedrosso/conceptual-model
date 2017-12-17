@@ -30,7 +30,7 @@ import statics.DatabaseHelper;
 import static statics.DatabaseHelper.currentUser;
 
 public class ActivitySettings extends AppCompatActivity {
-    private final String LOG_TAG = ActivityMain.LOG_TAG_prefix +  this.getClass().getSimpleName();
+    private final String TAG = ActivityMain.TAG_prefix +  this.getClass().getSimpleName();
     private final int SELECT_PHOTO = 1;
 
     ImageView imgAvatar;
@@ -64,7 +64,7 @@ public class ActivitySettings extends AppCompatActivity {
                     if (ContextCompat.checkSelfPermission(getBaseContext(),
                             Manifest.permission.READ_EXTERNAL_STORAGE)
                             != PackageManager.PERMISSION_GRANTED) {
-                        Log.d(LOG_TAG, "Asking for permission for READ_EXTERNAL_STORAGE");
+                        Log.d(TAG, "Asking for permission for READ_EXTERNAL_STORAGE");
 
                         // request permission
                         ActivityCompat.requestPermissions(ActivitySettings.this,
@@ -91,12 +91,12 @@ public class ActivitySettings extends AppCompatActivity {
                 String pass1 = etPassword1.getText().toString();
                 String pass2 = etPassword2.getText().toString();
 
-                Log.d(LOG_TAG, "Try to change password.");
+                Log.d(TAG, "Try to change password.");
 
                 // check if passwords are equal
                 if (pass1.equals(pass2)){
                     // password are equal
-                    Log.d(LOG_TAG, "2 given passwords are equal, try to update in database.");
+                    Log.d(TAG, "2 given passwords are equal, try to update in database.");
 
                     // update database
                     DatabaseHelper.User.changePassword(pass1);
@@ -105,7 +105,7 @@ public class ActivitySettings extends AppCompatActivity {
                 }
                 else {
                     // passwords are not equal
-                    Log.d(LOG_TAG, "2 given passwords are not equal, no changes are made.");
+                    Log.d(TAG, "2 given passwords are not equal, no changes are made.");
                     Toast.makeText(getBaseContext(),"The 2 given password are not the same.", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -179,7 +179,7 @@ public class ActivitySettings extends AppCompatActivity {
 
             // flag logout & close
             case R.id.menu_item_logout:
-                Log.d(LOG_TAG, "User loggin out.");
+                Log.d(TAG, "User loggin out.");
 
                 ActivityMain.bolLogOut = true;
                 finish();

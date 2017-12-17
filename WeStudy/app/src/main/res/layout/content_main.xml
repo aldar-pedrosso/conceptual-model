@@ -10,7 +10,17 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/content_main-btnReset"
+            android:src="@drawable/ic_reset"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="10dp"
+            android:visibility="visible"/>
 
         <EditText
             android:id="@+id/content_main-etUsername"
@@ -61,43 +71,48 @@
                 android:layout_margin="3dp"
                 android:background="@android:color/background_light">
 
-                <TextView
-                    android:id="@+id/content_main-tvAutoLoginInfo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="10dp"
-                    android:text="Test login" />
+                    <TextView
+                        android:id="@+id/content_main-tvAutoLoginInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_margin="10dp"
+                        android:text="Test login" />
 
                 <RelativeLayout
+                    android:id="@+id/content_main-rllEasyLoginOptions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/content_main-tvAutoLoginInfo">
                     <ImageButton
                         android:id="@+id/content_main-btnStudent"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
                         android:layout_margin="10dp"
                         android:src="@drawable/ic_student" />
 
                     <ImageButton
                         android:id="@+id/content_main-btnTeacher"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
                         android:layout_margin="10dp"
                         android:layout_toRightOf="@id/content_main-btnStudent"
                         android:src="@drawable/ic_teacher" />
 
                     <ImageButton
                         android:id="@+id/content_main-btnSchool"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
                         android:layout_margin="10dp"
                         android:layout_toRightOf="@id/content_main-btnTeacher"
                         android:src="@drawable/ic_school" />
+
                 </RelativeLayout>
+
+
             </RelativeLayout>
         </RelativeLayout>
+
     </RelativeLayout>
 
 </ScrollView>

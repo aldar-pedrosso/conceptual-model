@@ -11,8 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
+import com.example.pedro.westudy.ActivityJoinCourse;
 import com.example.pedro.westudy.ActivityMain;
 import com.example.pedro.westudy.ActivitySettings;
 import com.example.pedro.westudy.R;
@@ -23,7 +23,7 @@ import objects.AdapterCourse;
 import statics.DatabaseHelper;
 
 public class ActivityStudentHome extends AppCompatActivity {
-    private final String LOG_TAG = ActivityMain.LOG_TAG_prefix + this.getClass().getSimpleName();
+    private final String TAG = ActivityMain.TAG_prefix + this.getClass().getSimpleName();
     public static boolean updatePending = false;
 
     @Override
@@ -38,7 +38,10 @@ public class ActivityStudentHome extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getBaseContext(), "Action for adding new course", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Open activity for adding new course");
+
+                Intent newIntent = new Intent(getBaseContext(), ActivityJoinCourse.class);
+                startActivity(newIntent);
             }
         });
 
@@ -54,7 +57,7 @@ public class ActivityStudentHome extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(LOG_TAG, "Open posts of the course '" + myCourses.get(position) + "'");
+                Log.d(TAG, "Open posts of the course '" + myCourses.get(position) + "'");
 
                 ActivityStudentCoursePosts.currentCourse = myCourses.get(position);
                 Intent ChosenCourse = new Intent(getBaseContext(), ActivityStudentCoursePosts.class);
@@ -69,7 +72,7 @@ public class ActivityStudentHome extends AppCompatActivity {
 
         // check if user logged out
         if (ActivityMain.bolLogOut){
-            Log.d(LOG_TAG, "Logged out, redirect to previous activity");
+            Log.d(TAG, "Logged out, redirect to previous activity");
             finish();
         }
         else if (updatePending) {
@@ -96,14 +99,14 @@ public class ActivityStudentHome extends AppCompatActivity {
         switch (id){
             // open settings
             case R.id.menu_item_settings:
-                Log.d(LOG_TAG, "Opening settings");
+                Log.d(TAG, "Opening settings");
                 Intent mySettings = new Intent(this, ActivitySettings.class);
                 startActivity(mySettings);
                 break;
 
             // flag logout & close
             case R.id.menu_item_logout:
-                Log.d(LOG_TAG, "User logging out.");
+                Log.d(TAG, "User logging out.");
 
                 ActivityMain.bolLogOut = true;
                 finish();
