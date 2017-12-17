@@ -39,6 +39,8 @@ public class ActivityJoinCourse extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // set title
+        setTitle("Join a new course");
 
         // set listview to adapter
         final ListView listView = findViewById(R.id.activity_join_course_lvCourses);
