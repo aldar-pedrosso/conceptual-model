@@ -52,6 +52,14 @@
         <activity
             android:name=".ActivityJoinCourse"
             android:label="@string/title_activity_join_course"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".school.ActivitySchoolHome"
+            android:label="@string/title_activity_school_home"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".school.ActivitySchoolNewPerson"
+            android:label="@string/title_activity_school_new_person"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

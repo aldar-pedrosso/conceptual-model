@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:lines="1"
                 android:hint="Title"
-                android:background="#d7efe5"/>
+                android:background="@color/colorPrimaryLight"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/layoutTitle"
-            android:background="#d7efe5"
+            android:background="@color/colorPrimaryLight"
             android:layout_marginTop="5dp">
 
             <EditText

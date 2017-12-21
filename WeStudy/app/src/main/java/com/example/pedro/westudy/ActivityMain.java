@@ -1,9 +1,11 @@
 package com.example.pedro.westudy;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.example.pedro.westudy.school.ActivitySchoolHome;
 import com.example.pedro.westudy.student.ActivityStudentHome;
 
 import statics.DatabaseHelper;
@@ -143,57 +146,61 @@ public class ActivityMain extends AppCompatActivity {
 
     // attempt to log in
     private void checkLogin() {
-        // todo: new login?
-        Intent MyHome = new Intent(this, ActivityStudentHome.class);
-
         if (DatabaseHelper.tryLogin(etUsername.getText().toString(), etPassword.getText().toString())){
+            Intent MyHome;
+
             // check user & set home
             switch (currentUser.Rank){
                 case Student:
+                    // say hello
                     Log.d(TAG, "Recognized as student");
+                    Toast.makeText(ActivityMain.this, "Welcome " + currentUser.Username, Toast.LENGTH_SHORT).show();
+
+                    // go to home
                     MyHome = new Intent(this, ActivityStudentHome.class);
-                    continueLogin(MyHome);
+                    startActivity(MyHome);
                     break;
 
                 case Teacher:
                     // todo: change to other home
-                    Log.d(TAG, "Recognized as teacher");
-                    Toast.makeText(this.getBaseContext(), "Homepage for teacher not implemented yet, so going to student home instead.", Toast.LENGTH_LONG).show();
+                    // Toast.makeText(this.getBaseContext(), "Homepage for teacher not implemented yet, so going to student home instead.", Toast.LENGTH_LONG).show();
 
-                    final Intent MyHomes = new Intent(this, ActivityStudentHome.class);
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            continueLogin(MyHomes);
-                        }
-                    }, 5000);   // 5 seconds wait
 
+                    // make a dialog window
+                    new AlertDialog.Builder(this)
+                            .setTitle("Not yet implemented")
+                            .setMessage("Home for teacher is not yet implemented, instead you'll be taking to the student home")
+                            .setIcon(R.drawable.ic_warning)
+                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    // say hello
+                                    Log.d(TAG, "Recognized as teacher");
+                                    Toast.makeText(ActivityMain.this, "Welcome " + currentUser.Username, Toast.LENGTH_SHORT).show();
+
+                                    // go to home
+                                    Intent MyHome = new Intent(ActivityMain.this, ActivityStudentHome.class);
+                                    startActivity(MyHome);
+                                }
+                            })
+                            .create().show();
                     break;
 
                 case School:
-                    // todo: change to other home
-                    Log.d(TAG, "Recognized as teacher");
-                    Toast.makeText(this.getBaseContext(), "Homepage for school not implemented yet, so going to student home instead.", Toast.LENGTH_LONG).show();
-
-                    final Intent MyHomess = new Intent(this, ActivityStudentHome.class);
-                    new Handler().postDelayed(new Runnable() {
-                        public void run() {
-                            continueLogin(MyHomess);
-                        }
-                    }, 5000);   // 5 seconds wait
+                    // say hello
+                    Log.d(TAG, "Recognized as school");
+                    Toast.makeText(this.getBaseContext(), "Welcome " + currentUser.Username, Toast.LENGTH_SHORT).show();
+                    // go to home
+                    MyHome = new Intent(this, ActivitySchoolHome.class);
+                    startActivity(MyHome);
                     break;
             }
+
+
         }
         else {
             // wrong user
             Toast.makeText(this.getBaseContext(), "Wrong username or password", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void continueLogin(Intent MyHome){
-        // say hello
-        Toast.makeText(this.getBaseContext(), "Welcome " + currentUser.Username, Toast.LENGTH_SHORT).show();
-
-        // go to home
-        startActivity(MyHome);
     }
 }

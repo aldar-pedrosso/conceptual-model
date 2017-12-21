@@ -5,4 +5,6 @@
     <string name="title_activity_student_comments">ActivityStudentComments</string>
     <string name="title_activity_new_comment">ActivityNewComment</string>
     <string name="title_activity_join_course">ActivityJoinCourse</string>
+    <string name="title_activity_school_home">ActivitySchoolHome</string>
+    <string name="title_activity_school_new_person">ActivitySchoolNewPerson</string>
 </resources>

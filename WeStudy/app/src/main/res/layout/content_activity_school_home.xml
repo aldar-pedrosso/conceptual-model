@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.pedro.westudy.school.ActivitySchoolHome"
+    tools:showIn="@layout/activity_school_home">
+
+    <LinearLayout
+        android:id="@+id/activity_school_home-lltNewPeople"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/colorPrimaryLight"
+        android:padding="10dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="Add new people"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/activity_school_home-imgNewStudent"
+                android:src="@drawable/ic_student"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
+            <Button
+                android:id="@+id/activity_school_home-btnNewStudent"
+                android:text="New Student"
+                android:layout_width="200dp"
+                android:layout_height="50dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+            <ImageButton
+                android:id="@+id/activity_school_home-imgNewTeacher"
+                android:src="@drawable/ic_teacher"
+                android:layout_width="50dp"
+                android:layout_height="50dp" />
+            <Button
+                android:id="@+id/activity_school_home-btnNewTeacher"
+                android:text="New Teacher"
+                android:layout_width="200dp"
+                android:layout_height="50dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/activity_school_home-btnManageCourses"
+        android:text="Manage courses"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/activity_school_home-lltNewPeople"/>
+
+</RelativeLayout>
