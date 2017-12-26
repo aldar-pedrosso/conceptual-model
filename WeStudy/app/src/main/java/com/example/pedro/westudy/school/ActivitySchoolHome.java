@@ -74,11 +74,16 @@ public class ActivitySchoolHome extends AppCompatActivity {
     }
 
     private void onNewStudentClicked(){
-        Log.d(TAG, "Recognized as student");
-        Intent MyHome = new Intent(this, ActivityStudentHome.class);
+        Log.d(TAG, "Clicked 'new student'");
+        Intent intentStudent = new Intent(this, ActivitySchoolNewPerson.class);
+        ActivitySchoolNewPerson.isNewStudent = true;
+        startActivity(intentStudent);
     }
     private void onNewTeacherClicked(){
         Log.d(TAG, "Clicked 'new teacher'");
+        Intent intentTeacher = new Intent(this, ActivitySchoolNewPerson.class);
+        ActivitySchoolNewPerson.isNewStudent = false;
+        startActivity(intentTeacher);
     }
 
 
