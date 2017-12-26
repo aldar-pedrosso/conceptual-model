@@ -7,4 +7,5 @@
     <string name="title_activity_join_course">ActivityJoinCourse</string>
     <string name="title_activity_school_home">ActivitySchoolHome</string>
     <string name="title_activity_school_new_person">ActivitySchoolNewPerson</string>
+    <string name="title_activity_school_manage_courses">ActivitySchoolManageCourses</string>
 </resources>

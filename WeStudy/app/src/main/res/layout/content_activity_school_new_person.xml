@@ -21,41 +21,41 @@
 
 
         <TextView
-            android:id="@+id/activity_new_person-txUsername"
+            android:id="@+id/activity_school_new_person-txUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Username"/>
 
         <EditText
-            android:id="@+id/activity_new_person-edUsername"
+            android:id="@+id/activity_school_new_person-etUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/activity_new_person-txUsername"
+            android:layout_below="@id/activity_school_new_person-txUsername"
             android:ems="10"
-            android:inputType="textPassword" />
+            android:inputType="textPersonName" />
 
         <TextView
-            android:id="@+id/activity_new_person-txEmail"
+            android:id="@+id/activity_school_new_person-txEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Email"
-            android:layout_below="@id/activity_new_person-edUsername"/>
+            android:layout_below="@id/activity_school_new_person-etUsername"/>
 
         <EditText
-            android:id="@+id/activity_new_person-edEmail"
+            android:id="@+id/activity_school_new_person-etEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:layout_below="@id/activity_new_person-txEmail"
-            android:inputType="textPassword" />
+            android:layout_below="@id/activity_school_new_person-txEmail"
+            android:inputType="textEmailAddress" />
 
         <Button
-            android:id="@+id/activity_new_person-btnSubmit"
+            android:id="@+id/activity_school_new_person-btnSubmit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="Submit"
-            android:layout_below="@id/activity_new_person-edEmail"/>
+            android:layout_below="@id/activity_school_new_person-etEmail"/>
 
     </RelativeLayout>
 

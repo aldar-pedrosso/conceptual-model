@@ -232,12 +232,138 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             // release cursor
             cursor.close();
+            db.close();
 
             Log.d(TAG, "Login success");
             return true;
         } else {
             Log.d(TAG, "Login failed");
             return false;
+        }
+    }
+
+    // all database code concerning school actions
+    public static class School{
+        /**
+         * Add a new user to the system
+         * @param Username The username of the new user
+         * @param IsStudent true if a student, false if a teacher
+         * @return true if successfully added, false if the username was already in use
+         */
+        public static boolean addPerson(String Username, boolean IsStudent){
+            //first check if the username not already exists
+            SQLiteDatabase db = ourInstance.getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT * " +
+                    "FROM User " +
+                    "WHERE Username like ? ",
+                    new String[]{Username});
+
+            // check result
+            if (cursor != null && cursor.moveToFirst()) {
+                // user already exists!
+                cursor.close();
+                return false;
+            }
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+
+            // ----------------------------------------
+            // if the user doesn't exist yet, make him
+            String myRank;
+
+            if(IsStudent)
+                myRank = "Student";
+            else
+                myRank = "Teacher";
+
+            db = ourInstance.getWritableDatabase();
+            db.execSQL("INSERT INTO User (Username, Password, Rank_id) " +
+                            "SELECT ?, ?, id " +
+                            "FROM Rank " +
+                            "WHERE Name = ? ",
+                    new Object[]{Username, "random", myRank});
+            db.close();
+
+            return true;
+        }
+
+        /**
+         * Get a list of courses filtered with the given text.
+         * @param Filter The filter text for the search results.
+         * @return a filtered course list
+         */
+        public static ArrayList<String> getFilteredCourses(String Filter) {
+            SQLiteDatabase db = ourInstance.getReadableDatabase();
+
+            // check Filter query
+            Filter = DatabaseUtils.sqlEscapeString(Filter);
+            Filter = Filter.substring(1,Filter.length()-1);
+
+            // set request query
+            Cursor cursor = db.rawQuery(
+                    "SELECT Name " +
+                            "FROM Course " +
+                            "WHERE Name LIKE '%" + Filter + "%' " +
+                            "ORDER BY Name", null);
+
+            // get results
+            ArrayList<String> results = new ArrayList<>();
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    results.add(cursor.getString(0));
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+
+            return results;
+        }
+
+        /**
+         * Delete a course
+         * @param CourseName The course name to be deleted
+         */
+        public static void deleteCourse(String CourseName) {
+            SQLiteDatabase db = ourInstance.getWritableDatabase();
+            db.execSQL("DELETE FROM Course " +
+                            "WHERE Name = ? ",
+                    new Object[]{CourseName});
+            db.close();
+        }
+
+        /**
+         * Add a new course
+         * @param CourseName The course name to be added
+         */
+        public static boolean addCourse(String CourseName) {
+            //first check if the course not already exists
+            SQLiteDatabase db = ourInstance.getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT * " +
+                            "FROM Course " +
+                            "WHERE Name like ? ",
+                    new String[]{CourseName});
+
+            // check result
+            if (cursor != null && cursor.moveToFirst()) {
+                // user already exists!
+                cursor.close();
+                return false;
+            }
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+
+            // ---------------------------------------
+            // now try to add the new course
+            db = ourInstance.getWritableDatabase();
+            db.execSQL("INSERT INTO Course (Name) " +
+                            "VALUES(?) ",
+                    new Object[]{CourseName});
+            db.close();
+
+            return true;
         }
     }
 

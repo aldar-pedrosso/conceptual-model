@@ -60,6 +60,10 @@
         <activity
             android:name=".school.ActivitySchoolNewPerson"
             android:label="@string/title_activity_school_new_person"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".school.ActivitySchoolManageCourses"
+            android:label="@string/title_activity_school_manage_courses"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

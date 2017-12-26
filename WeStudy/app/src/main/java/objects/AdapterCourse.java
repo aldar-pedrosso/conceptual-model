@@ -21,7 +21,6 @@ public class AdapterCourse extends ArrayAdapter<String> {
         super(context, R.layout.list_item_course, objects);
     }
 
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
@@ -34,7 +33,7 @@ public class AdapterCourse extends ArrayAdapter<String> {
             holder = new ViewHolder();
 
             // get view items you need
-            holder.tvName = convertView.findViewById(R.id.listItem_course_name);
+            holder.tvName = convertView.findViewById(R.id.listItem_course_tvName);
 
             // set tag
             convertView.setTag(holder);

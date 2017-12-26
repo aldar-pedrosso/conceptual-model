@@ -68,31 +68,35 @@ public class ActivitySchoolHome extends AppCompatActivity {
         btnManageCourses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Clicked 'manage courses'");
+                Log.d(TAG, "User goes to activity to manage courses");
+
+                Intent myIntent = new Intent(ActivitySchoolHome.this, ActivitySchoolManageCourses.class);
+                startActivity(myIntent);
+                ActivitySchoolManageCourses.filterChanged = true;
             }
         });
     }
 
-    private void onNewStudentClicked(){
+    private void onNewStudentClicked() {
         Log.d(TAG, "Clicked 'new student'");
         Intent intentStudent = new Intent(this, ActivitySchoolNewPerson.class);
         ActivitySchoolNewPerson.isNewStudent = true;
         startActivity(intentStudent);
     }
-    private void onNewTeacherClicked(){
+
+    private void onNewTeacherClicked() {
         Log.d(TAG, "Clicked 'new teacher'");
         Intent intentTeacher = new Intent(this, ActivitySchoolNewPerson.class);
         ActivitySchoolNewPerson.isNewStudent = false;
         startActivity(intentTeacher);
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
 
         // check if user logged out
-        if (ActivityMain.bolLogOut){
+        if (ActivityMain.bolLogOut) {
             Log.d(TAG, "Logged out, redirect to previous activity");
             finish();
         }
@@ -110,7 +114,7 @@ public class ActivitySchoolHome extends AppCompatActivity {
         int id = item.getItemId();
 
         // menu actions
-        switch (id){
+        switch (id) {
             // flag logout & close
             case R.id.menu_item_logout:
                 Log.d(TAG, "User logging out.");

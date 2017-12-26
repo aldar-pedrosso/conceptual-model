@@ -5,7 +5,7 @@
     android:background="@android:color/holo_blue_bright">
 
     <TextView
-        android:id="@+id/listItem_course-name"
+        android:id="@+id/listItem_course-tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
