@@ -1,17 +1,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.pedro.westudy.student.ActivityStudentCoursePosts">
+    tools:context="com.example.pedro.westudy.ActivityCoursePosts">
 
 
     <item
         android:id="@+id/menu_item_leave"
         android:orderInCategory="500"
         android:title="Leave course"
-        app:showAsAction="collapseActionView"
-        />
+        app:showAsAction="collapseActionView"/>
 
 
+    <!-- some space between options & log out -->
+    <item
+        android:title=""
+        android:enabled="false"
+        android:orderInCategory="999"
+        app:showAsAction="collapseActionView"/>
     <item
         android:id="@+id/menu_item_logout"
         android:orderInCategory="1000"

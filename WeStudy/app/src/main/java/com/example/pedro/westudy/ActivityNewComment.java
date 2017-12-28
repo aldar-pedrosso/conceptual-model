@@ -9,9 +9,6 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.pedro.westudy.student.ActivityStudentCoursePosts;
-import com.example.pedro.westudy.student.ActivityStudentPostComments;
-
 import statics.DatabaseHelper;
 
 
@@ -56,8 +53,8 @@ public class ActivityNewComment extends AppCompatActivity {
 
                 Toast.makeText(getBaseContext(), "Comment added", Toast.LENGTH_SHORT).show();
 
-                ActivityStudentCoursePosts.updatePending = true;
-                ActivityStudentPostComments.updatePending = true;
+                ActivityCoursePosts.updatePending = true;
+                ActivityPostComments.updatePending = true;
                 finish();
                 break;
 

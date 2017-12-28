@@ -11,21 +11,21 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/menu_item_hidden"
+        android:id="@+id/menu_item_hiddenToggle"
         android:title="Hidden"
         android:checkable="true"
         android:orderInCategory="200"
         app:showAsAction="collapseActionView"/>
 
     <item
-        android:id="@+id/menu_item_requested"
+        android:id="@+id/menu_item_requestedToggle"
         android:title="Requested"
         android:checkable="true"
         android:orderInCategory="201"
         app:showAsAction="collapseActionView"/>
 
     <item
-        android:id="@+id/menu_item_pinned"
+        android:id="@+id/menu_item_pinnedToggle"
         android:title="Pinned"
         android:checkable="true"
         android:orderInCategory="202"

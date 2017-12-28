@@ -15,6 +15,7 @@ import android.widget.ListView;
 import com.example.pedro.westudy.ActivityJoinCourse;
 import com.example.pedro.westudy.ActivityMain;
 import com.example.pedro.westudy.ActivitySettings;
+import com.example.pedro.westudy.ActivityCoursePosts;
 import com.example.pedro.westudy.R;
 
 import java.util.ArrayList;
@@ -59,8 +60,8 @@ public class ActivityStudentHome extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "Open posts of the course '" + myCourses.get(position) + "'");
 
-                ActivityStudentCoursePosts.currentCourse = myCourses.get(position);
-                Intent ChosenCourse = new Intent(getBaseContext(), ActivityStudentCoursePosts.class);
+                ActivityCoursePosts.currentCourse = myCourses.get(position);
+                Intent ChosenCourse = new Intent(getBaseContext(), ActivityCoursePosts.class);
                 startActivity(ChosenCourse);
             }
         });

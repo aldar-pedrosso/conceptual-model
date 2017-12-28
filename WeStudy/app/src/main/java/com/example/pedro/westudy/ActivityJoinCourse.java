@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.pedro.westudy.student.ActivityStudentHome;
+import com.example.pedro.westudy.teacher.ActivityTeacherHome;
 
 import java.util.ArrayList;
 
@@ -94,7 +95,10 @@ public class ActivityJoinCourse extends AppCompatActivity {
 
                                                         DatabaseHelper.User.addCourse(chosenCourse);
 
+                                                        // notify update
                                                         ActivityStudentHome.updatePending = true;
+                                                        ActivityTeacherHome.updatePending = true;
+
                                                         finish();
                                                     }
                                                 })

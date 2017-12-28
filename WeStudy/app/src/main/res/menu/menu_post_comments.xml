@@ -26,6 +26,19 @@
         android:title="Request"/>
 
     <item
+        android:id="@+id/menu_item_pinnedToggle"
+        android:orderInCategory="201"
+        app:showAsAction="never"
+        android:checkable="true"
+        android:title="Pinned"/>
+
+    <!-- some space between options & log out -->
+    <item
+        android:title=""
+        android:enabled="false"
+        android:orderInCategory="999"
+        app:showAsAction="collapseActionView"/>
+    <item
         android:id="@+id/menu_item_logout"
         android:orderInCategory="1000"
         app:showAsAction="collapseActionView"

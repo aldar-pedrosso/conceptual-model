@@ -1,29 +1,32 @@
-package com.example.pedro.westudy.student;
+package com.example.pedro.westudy;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Switch;
-
-import com.example.pedro.westudy.ActivityMain;
-import com.example.pedro.westudy.ActivityNewComment;
-import com.example.pedro.westudy.R;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import enums.UserRank;
 import objects.AdapterComment;
 import objects.Comment;
 import objects.Post;
 import statics.DatabaseHelper;
 
-public class ActivityStudentPostComments extends AppCompatActivity {
+import static statics.DatabaseHelper.currentUser;
+
+public class ActivityPostComments extends AppCompatActivity {
     private final String TAG = ActivityMain.TAG_prefix + this.getClass().getSimpleName();
     public static boolean updatePending = false;
 
@@ -31,14 +34,15 @@ public class ActivityStudentPostComments extends AppCompatActivity {
     public static Post currentPost = null;
 
     // menu controls
-    Switch requestToggle = null;
-    MenuItem requestLogoOn = null;
-    MenuItem requestLogoOff = null;
+    Switch requestToggle;
+    MenuItem requestLogoOn;
+    MenuItem requestLogoOff;
+    MenuItem pinnedToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_post_comments);
+        setContentView(R.layout.activity_post_comments);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -74,6 +78,50 @@ public class ActivityStudentPostComments extends AppCompatActivity {
         // set listview to adapter
         ListView listView = findViewById(R.id.activity_student_comments_lvComments);
         listView.setAdapter(adapter);
+
+        // extra action for teachers
+        if (currentUser.Rank == UserRank.Teacher)
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                    Log.d(TAG, "User tries to delete post from user: " + myComments.get(position).user.Username + ", at time: " + myComments.get(position).time);
+
+                    // check if a comment was selected (not the post content)
+                    if (position == 0)
+                        Toast.makeText(getBaseContext(), "Can't delete the original post content", Toast.LENGTH_SHORT).show();
+                    else
+                        // make a dialog window
+                        new AlertDialog.Builder(ActivityPostComments.this)
+                                .setTitle("Delete comment?")
+                                .setMessage("User: " + myComments.get(position).user.Username + "\n" +
+                                        "Time: " + myComments.get(position).time + "\n\n" +
+                                        "Content: \n" +
+                                        myComments.get(position).content)
+                                .setIcon(R.drawable.ic_warning)
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Log.d(TAG, "User pressed 'no', the comment will not be deleted.");
+                                    }
+                                })
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Log.d(TAG, "User pressed 'yes', and thus the comment will be deleted.");
+                                        Toast.makeText(getBaseContext(), "Comment deleted", Toast.LENGTH_SHORT).show();
+
+                                        // delete comment
+                                        DatabaseHelper.Post.deleteComment(myComments.get(position).user.Username, myComments.get(position).time);
+
+                                        // reload
+                                        updatePending = true;
+                                        onResume();
+                                    }
+                                })
+                                .create().show();
+                    return true;
+                }
+            });
     }
 
     @Override
@@ -83,13 +131,12 @@ public class ActivityStudentPostComments extends AppCompatActivity {
         Log.d(TAG, "Resume activated");
 
         // check if user logged out
-        if (ActivityMain.bolLogOut){
+        if (ActivityMain.bolLogOut) {
             Log.d(TAG, "Logged out, redirect to previous activity");
             finish();
-        }
-        else {
+        } else {
             // refresh activity if updates here
-            if (updatePending){
+            if (updatePending) {
                 finish();
                 startActivity(getIntent());
 
@@ -103,7 +150,7 @@ public class ActivityStudentPostComments extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_post_comments, menu);
 
-        // set menu controls
+        // set request toggle
         MenuItem myItem = menu.findItem(R.id.menu_item_requestToggle);
         requestToggle = myItem.getActionView().findViewById(R.id.menu_switch);
         requestToggle.setChecked(currentPost.requested);
@@ -120,6 +167,16 @@ public class ActivityStudentPostComments extends AppCompatActivity {
 
         // set initial toggle
         changeRequest(currentPost.requested);
+
+        // set pinned toggle
+        pinnedToggle = menu.findItem(R.id.menu_item_pinnedToggle);
+
+        // only teacher may see pinned toggle
+        if (currentUser.Rank == UserRank.Teacher)
+            pinnedToggle.setVisible(true);
+        else
+            pinnedToggle.setVisible(false);
+
         return true;
     }
 
@@ -134,6 +191,11 @@ public class ActivityStudentPostComments extends AppCompatActivity {
                 changeRequest(!requestToggle.isChecked());
                 break;
 
+            case R.id.menu_item_pinnedToggle:
+                // switch toggle
+                changePinned(!currentPost.pinned);
+                break;
+
             // flag logout & close
             case R.id.menu_item_logout:
                 Log.d(TAG, "User loggin out.");
@@ -146,7 +208,21 @@ public class ActivityStudentPostComments extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void changeRequest(Boolean newValue){
+    private void changePinned(Boolean newValue){
+        Log.d(TAG, "Change pinned to: " + newValue);
+
+        // set correct toggles
+        currentPost.pinned = newValue;
+        pinnedToggle.setChecked(newValue);
+
+        // update database
+        DatabaseHelper.Post.updatePinned();
+
+        // toggle update in activity with posts
+        ActivityCoursePosts.updatePending = true;
+    }
+
+    private void changeRequest(Boolean newValue) {
         Log.d(TAG, "Change requested to: " + newValue);
 
         // change menu controls
@@ -160,6 +236,6 @@ public class ActivityStudentPostComments extends AppCompatActivity {
         DatabaseHelper.Post.updateRequest();
 
         // toggle update in activity with posts
-        ActivityStudentCoursePosts.updatePending = true;
+        ActivityCoursePosts.updatePending = true;
     }
 }

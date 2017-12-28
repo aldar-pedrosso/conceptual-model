@@ -1,11 +1,8 @@
 package com.example.pedro.westudy;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.pedro.westudy.school.ActivitySchoolHome;
 import com.example.pedro.westudy.student.ActivityStudentHome;
+import com.example.pedro.westudy.teacher.ActivityTeacherHome;
 
 import statics.DatabaseHelper;
 
@@ -162,28 +160,12 @@ public class ActivityMain extends AppCompatActivity {
                     break;
 
                 case Teacher:
-                    // todo: change to other home
-                    // Toast.makeText(this.getBaseContext(), "Homepage for teacher not implemented yet, so going to student home instead.", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "Recognized as teacher");
+                    Toast.makeText(ActivityMain.this, "Welcome " + currentUser.Username, Toast.LENGTH_SHORT).show();
 
-
-                    // make a dialog window
-                    new AlertDialog.Builder(this)
-                            .setTitle("Not yet implemented")
-                            .setMessage("Home for teacher is not yet implemented, instead you'll be taking to the student home")
-                            .setIcon(R.drawable.ic_warning)
-                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    // say hello
-                                    Log.d(TAG, "Recognized as teacher");
-                                    Toast.makeText(ActivityMain.this, "Welcome " + currentUser.Username, Toast.LENGTH_SHORT).show();
-
-                                    // go to home
-                                    Intent MyHome = new Intent(ActivityMain.this, ActivityStudentHome.class);
-                                    startActivity(MyHome);
-                                }
-                            })
-                            .create().show();
+                    // go to home
+                    MyHome = new Intent(this, ActivityTeacherHome.class);
+                    startActivity(MyHome);
                     break;
 
                 case School:
@@ -195,8 +177,6 @@ public class ActivityMain extends AppCompatActivity {
                     startActivity(MyHome);
                     break;
             }
-
-
         }
         else {
             // wrong user

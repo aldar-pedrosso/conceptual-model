@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pedro.westudy.ActivityMain;
+import com.example.pedro.westudy.ActivityCoursePosts;
 import com.example.pedro.westudy.R;
 
 /**
@@ -44,7 +45,7 @@ public class ActivityStudentCourseConfirmLeaving extends AppCompatActivity {
         btnYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActivityStudentCoursePosts.courseLeft = true;
+                ActivityCoursePosts.courseLeft = true;
 
                 Toast.makeText(getBaseContext(), "Course left", Toast.LENGTH_SHORT).show();
                 finish();
@@ -59,7 +60,7 @@ public class ActivityStudentCourseConfirmLeaving extends AppCompatActivity {
             }
         });
 
-        txtLabel.setText("Are you sure you want to leave '" + ActivityStudentCoursePosts.currentCourse + "'?");
+        txtLabel.setText("Are you sure you want to leave '" + ActivityCoursePosts.currentCourse + "'?");
     }
 
     @Override

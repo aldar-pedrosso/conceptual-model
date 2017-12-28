@@ -10,8 +10,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.pedro.westudy.ActivityMain;
-import com.example.pedro.westudy.student.ActivityStudentPostComments;
-import com.example.pedro.westudy.student.ActivityStudentCoursePosts;
+import com.example.pedro.westudy.ActivityPostComments;
+import com.example.pedro.westudy.ActivityCoursePosts;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -522,7 +522,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "LEFT OUTER JOIN Comment as cm ON p.id = cm.Post_id " +
                     "WHERE cs.Name = ? " +
                     "GROUP BY p.id " +
-                    "ORDER BY p.Pinned DESC, LastComment DESC, p.Time DESC", new String[]{ActivityStudentCoursePosts.currentCourse});
+                    "ORDER BY p.Pinned DESC, LastComment DESC, p.Time DESC", new String[]{ActivityCoursePosts.currentCourse});
 
             // get results
             ArrayList<objects.Post> results = new ArrayList<>();
@@ -603,7 +603,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "LEFT OUTER JOIN Course AS c " +
                     "WHERE u.Username = ? " +
                     "AND c.Name = ?",
-                    new Object[]{Title, Content, hidden, requested, pinned, time, currentUser.Username, ActivityStudentCoursePosts.currentCourse});
+                    new Object[]{Title, Content, hidden, requested, pinned, time, currentUser.Username, ActivityCoursePosts.currentCourse});
+
+            db.close();
+        }
+
+        /**
+         * Delete a posts from the current selected course
+         * @param Title the title of the post within the current course
+         */
+        public static void deletePost(String Title) {
+            // get data
+            SQLiteDatabase db = ourInstance.getWritableDatabase();
+
+            db.execSQL("DELETE FROM Post " +
+                            "WHERE Title = ? " +
+                            "AND Course_id = (SELECT id FROM Course WHERE Name = ?)",
+                    new Object[]{Title, ActivityCoursePosts.currentCourse});
 
             db.close();
         }
@@ -616,7 +632,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             db.execSQL("DELETE FROM User_has_Course " +
                     "WHERE User_id = (SELECT id FROM User WHERE Username = ?) " +
-                    "AND Course_id = (SELECT id FROM Course WHERE Name = ?)", new Object[]{currentUser.Username, ActivityStudentCoursePosts.currentCourse});
+                    "AND Course_id = (SELECT id FROM Course WHERE Name = ?)", new Object[]{currentUser.Username, ActivityCoursePosts.currentCourse});
 
             db.close();
         }
@@ -639,7 +655,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "INNER JOIN User AS u on u.id = cm.User_id " +
                     "INNER JOIN Rank AS r on r.id = u.Rank_id " +
                     "WHERE p.Title = ? " +
-                    "ORDER BY cm.Time ASC", new String[]{ActivityStudentPostComments.currentPost.title});
+                    "ORDER BY cm.Time ASC", new String[]{ActivityPostComments.currentPost.title});
 
             // get results
             ArrayList<Comment> results = new ArrayList<>();
@@ -688,7 +704,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = ourInstance.getWritableDatabase();
 
             // updating row
-            int result = db.update("Post", values, "Title = ?", new String[]{ActivityStudentPostComments.currentPost.title});
+            int result = db.update("Post", values, "Title = ?", new String[]{ActivityPostComments.currentPost.title});
 
             // check result
             switch (result) {
@@ -709,12 +725,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         /**
-         * check the current requested value & update in database
+         * check the requested value of the current post & update in database
          */
         public static void updateRequest() {
             String result;
 
-            if (ActivityStudentPostComments.currentPost.requested)
+            if (ActivityPostComments.currentPost.requested)
                 result = "1";
             else
                 result = "0";
@@ -722,6 +738,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // update
             ContentValues values = new ContentValues();
             values.put("Requested", result);
+            generalUpdate(values);
+        }
+
+        /**
+         * check the pinned value of the current post & update in database
+         */
+        public static void updatePinned() {
+            String result;
+
+            if (ActivityPostComments.currentPost.pinned)
+                result = "1";
+            else
+                result = "0";
+
+            // update
+            ContentValues values = new ContentValues();
+            values.put("Pinned", result);
             generalUpdate(values);
         }
 
@@ -739,7 +772,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                             "SELECT ?, ?, u.id, ? " +
                             "FROM User AS u " +
                             "WHERE u.Username = ? ",
-                    new Object[]{Content, time, ActivityStudentPostComments.currentPost.id, currentUser.Username});
+                    new Object[]{Content, time, ActivityPostComments.currentPost.id, currentUser.Username});
+
+            db.close();
+        }
+
+        /**
+         * Delete a comment from the current post
+         * @param Username the username of the comment
+         * @param Time the time when this comment was posted
+         */
+        public static void deleteComment(String Username, String Time) {
+            // get data
+            SQLiteDatabase db = ourInstance.getWritableDatabase();
+
+            db.execSQL("DELETE FROM Comment " +
+                            "WHERE Time = ? " +
+                            "AND User_id = (SELECT id FROM User WHERE Username = ?)",
+                    new Object[]{Time, Username});
 
             db.close();
         }

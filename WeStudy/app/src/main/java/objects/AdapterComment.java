@@ -32,7 +32,7 @@ public class AdapterComment extends ArrayAdapter<Comment> {
         ViewHolder holder;
         LayoutInflater myInflater = LayoutInflater.from(getContext());
 
-        if (convertView == null){
+        if (convertView == null) {
             // new view
             convertView = myInflater.inflate(R.layout.list_item_comment, parent, false);
 
@@ -47,8 +47,7 @@ public class AdapterComment extends ArrayAdapter<Comment> {
 
             // set tag
             convertView.setTag(holder);
-        }
-        else {
+        } else {
             // recycle old view
             holder = (ViewHolder) convertView.getTag();
         }
@@ -62,9 +61,12 @@ public class AdapterComment extends ArrayAdapter<Comment> {
         holder.tvTime.setText(selectedComment.time);
 
         // set avatar if possible
-        if (currentUser.Avatar != null){
+        if (selectedComment.user.Avatar != null)
             holder.imgAvatar.setImageBitmap(BitmapFactory.decodeByteArray(selectedComment.user.Avatar, 0, selectedComment.user.Avatar.length));
-        }
+
+            // if not, set default again
+        else
+            holder.imgAvatar.setImageBitmap(BitmapFactory.decodeResource(parent.getResources(), R.drawable.ic_student));
 
         // set visibility
         if (selectedComment.user.Rank == UserRank.Teacher)
@@ -75,7 +77,7 @@ public class AdapterComment extends ArrayAdapter<Comment> {
         return convertView;
     }
 
-    static class ViewHolder{
+    static class ViewHolder {
         private TextView tvContent;
         private TextView tvTime;
         private TextView tvCreator;

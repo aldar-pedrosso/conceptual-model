@@ -1,8 +1,9 @@
-package com.example.pedro.westudy.student;
+package com.example.pedro.westudy;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.service.notification.NotificationListenerService;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,18 +16,20 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.pedro.westudy.ActivityMain;
-import com.example.pedro.westudy.ActivityNewPost;
-import com.example.pedro.westudy.R;
+import com.example.pedro.westudy.student.ActivityStudentHome;
+import com.example.pedro.westudy.teacher.ActivityTeacherHome;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
+import enums.UserRank;
 import objects.AdapterPost;
 import objects.Post;
 import statics.DatabaseHelper;
 
-public class ActivityStudentCoursePosts extends AppCompatActivity {
+import static statics.DatabaseHelper.currentUser;
+
+public class ActivityCoursePosts extends AppCompatActivity {
     private final String TAG = ActivityMain.TAG_prefix + this.getClass().getSimpleName();
     public static boolean updatePending = false;
     public static boolean courseLeft = false;
@@ -37,7 +40,7 @@ public class ActivityStudentCoursePosts extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_course_posts);
+        setContentView(R.layout.activity_course_posts);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -72,13 +75,53 @@ public class ActivityStudentCoursePosts extends AppCompatActivity {
                 Log.d(TAG, "Opening comments from post: " + myPosts.get(position).title);
 
                 // set current post
-                ActivityStudentPostComments.currentPost = myPosts.get(position);
+                ActivityPostComments.currentPost = myPosts.get(position);
 
                 // open new activity
-                Intent myComments = new Intent(getBaseContext(), ActivityStudentPostComments.class);
+                Intent myComments = new Intent(getBaseContext(), ActivityPostComments.class);
                 startActivity(myComments);
             }
         });
+
+        // extra action for teachers
+        if (currentUser.Rank == UserRank.Teacher)
+            listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                    Log.d(TAG, "User tries to delete post about: " + myPosts.get(position).title);
+
+                    // make a dialog window
+                    new AlertDialog.Builder(ActivityCoursePosts.this)
+                            .setTitle("Delete post?")
+                            .setMessage("User: " + myPosts.get(position).user.Username + "\n" +
+                                    "Time posted: " + myPosts.get(position).timePosted + "\n\n" +
+                                    "Title: \n" +
+                                    myPosts.get(position).title)
+                            .setIcon(R.drawable.ic_warning)
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.d(TAG, "User pressed 'no', the post will not be deleted.");
+                                }
+                            })
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.d(TAG, "User pressed 'yes', and thus the post will be deleted.");
+                                    Toast.makeText(getBaseContext(), "Post deleted", Toast.LENGTH_SHORT).show();
+
+                                    // delete post
+                                    DatabaseHelper.Course.deletePost(myPosts.get(position).title);
+
+                                    // reload
+                                    updatePending = true;
+                                    onResume();
+                                }
+                            })
+                            .create().show();
+                    return true;
+                }
+            });
     }
 
     @Override
@@ -103,11 +146,12 @@ public class ActivityStudentCoursePosts extends AppCompatActivity {
     /**
      * Action when the user left the current course
      */
-    private void onCourseLeft(){
+    private void onCourseLeft() {
         DatabaseHelper.Course.leave();
 
         Log.d(TAG, "Course left, redirect to previous activity (home)");
         ActivityStudentHome.updatePending = true;
+        ActivityTeacherHome.updatePending = true;
 
         // reset static field
         courseLeft = false;

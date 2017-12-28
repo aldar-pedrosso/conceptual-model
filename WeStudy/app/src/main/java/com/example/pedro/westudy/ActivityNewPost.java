@@ -9,8 +9,6 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.pedro.westudy.student.ActivityStudentCoursePosts;
-
 import enums.UserRank;
 import statics.DatabaseHelper;
 
@@ -52,8 +50,8 @@ public class ActivityNewPost extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_new_post, menu);
 
         // get pinned item
-        MenuItem itemPinned = menu.findItem(R.id.menu_item_pinned);
-        MenuItem itemHidden = menu.findItem(R.id.menu_item_hidden);
+        MenuItem itemPinned = menu.findItem(R.id.menu_item_pinnedToggle);
+        MenuItem itemHidden = menu.findItem(R.id.menu_item_hiddenToggle);
 
         // set visibility for pinned
         if (currentUser.Rank == UserRank.Teacher){
@@ -82,26 +80,26 @@ public class ActivityNewPost extends AppCompatActivity {
 
                 Toast.makeText(getBaseContext(), "Post added", Toast.LENGTH_SHORT).show();
 
-                ActivityStudentCoursePosts.updatePending = true;
+                ActivityCoursePosts.updatePending = true;
                 finish();
                 break;
 
             // toggle hidden
-            case R.id.menu_item_hidden:
+            case R.id.menu_item_hiddenToggle:
                 hidden = !hidden;
                 Log.d(TAG, "Changed option hidden to: " + hidden);
                 item.setChecked(hidden);
                 break;
 
             // toggle hidden
-            case R.id.menu_item_requested:
+            case R.id.menu_item_requestedToggle:
                 requested = !requested;
                 Log.d(TAG, "Changed option requested to: " + requested);
                 item.setChecked(requested);
                 break;
 
             // toggle hidden
-            case R.id.menu_item_pinned:
+            case R.id.menu_item_pinnedToggle:
                 pinned = !pinned;
                 Log.d(TAG, "Changed option pinned to: " + pinned);
                 item.setChecked(pinned);

@@ -30,7 +30,7 @@
             android:name=".ActivitySettings"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".student.ActivityStudentCoursePosts"
+            android:name=".ActivityCoursePosts"
             android:label="@string/title_activity_student_course"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -38,7 +38,7 @@
             android:label="ActivityStudentPost"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".student.ActivityStudentPostComments"
+            android:name=".ActivityPostComments"
             android:label="@string/title_activity_student_comments"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -64,7 +64,11 @@
         <activity
             android:name=".school.ActivitySchoolManageCourses"
             android:label="@string/title_activity_school_manage_courses"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".teacher.ActivityTeacherHome"
+            android:label="@string/title_activity_teacher_home"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
