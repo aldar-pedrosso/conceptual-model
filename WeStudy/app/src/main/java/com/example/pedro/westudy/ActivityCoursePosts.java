@@ -60,7 +60,6 @@ public class ActivityCoursePosts extends AppCompatActivity {
 
         // make list adapter
         final ArrayList<Post> myPosts = DatabaseHelper.Course.getPosts();
-        Collections.sort(myPosts, Collections.<Post>reverseOrder());
 
         AdapterPost adapter = new AdapterPost(this, myPosts);
 
@@ -111,10 +110,11 @@ public class ActivityCoursePosts extends AppCompatActivity {
                                     Toast.makeText(getBaseContext(), "Post deleted", Toast.LENGTH_SHORT).show();
 
                                     // delete post
-                                    DatabaseHelper.Course.deletePost(myPosts.get(position).title);
+                                    DatabaseHelper.Course.deletePost(myPosts.get(position).title,myPosts.get(position).user.Username,myPosts.get(position).timePosted);
 
                                     // reload
                                     updatePending = true;
+                                    ActivityTeacherHome.updatePending = true;
                                     onResume();
                                 }
                             })
@@ -151,6 +151,7 @@ public class ActivityCoursePosts extends AppCompatActivity {
 
         Log.d(TAG, "Course left, redirect to previous activity (home)");
         ActivityStudentHome.updatePending = true;
+        ActivityTeacherHome.updatePending = true;
         ActivityTeacherHome.updatePending = true;
 
         // reset static field

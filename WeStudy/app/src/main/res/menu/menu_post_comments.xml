@@ -34,6 +34,7 @@
 
     <!-- some space between options & log out -->
     <item
+        android:id="@+id/menu_item_logout_whitespace"
         android:title=""
         android:enabled="false"
         android:orderInCategory="999"

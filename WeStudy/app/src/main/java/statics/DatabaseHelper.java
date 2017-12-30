@@ -15,10 +15,12 @@ import com.example.pedro.westudy.ActivityCoursePosts;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import objects.Comment;
 import enums.UserRank;
+import objects.Post;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TAG = ActivityMain.TAG_prefix + DatabaseHelper.class.getSimpleName();
@@ -114,7 +116,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Reset database
      */
-    public static void resetDatabase(){
+    public static void resetDatabase() {
         ourInstance.onCreate(ourInstance.getWritableDatabase());
     }
 
@@ -242,20 +244,84 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+
+    /**
+     * Fill in details for list of posts
+     *
+     * @param cursor cursor made with SELECT format User.Username, Rank.Name, User.Avatar, Course.Name, Post.id, Post.Title, Post.Content, Post.Hidden, Post.Pinned, Post.Requested, Post.Time, 'LastComment', 'AmountOfComments'
+     * @return list of post objects
+     */
+    private static ArrayList<objects.Post> getPostDetails(Cursor cursor) {
+        // get results
+        ArrayList<objects.Post> results = new ArrayList<>();
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String rankText = cursor.getString(1);
+                UserRank realRank = null;
+
+                // check rank
+                switch (rankText) {
+                    case "Student":
+                        realRank = UserRank.Student;
+                        break;
+
+                    case "Teacher":
+                        realRank = UserRank.Teacher;
+                        break;
+
+                    case "School":
+                        realRank = UserRank.School;
+                        break;
+                }
+
+                // create user
+                objects.User newUser = new objects.User(cursor.getString(0), cursor.getBlob(2), realRank);
+
+                objects.Post newPost = new objects.Post();
+                newPost.creator = cursor.getString(0);
+                newPost.user = newUser;
+                newPost.course = cursor.getString(3);
+                newPost.id = cursor.getInt(4);
+                newPost.title = cursor.getString(5);
+                newPost.content = cursor.getString(6);
+                newPost.hidden = intToBool(cursor.getInt(7));
+                newPost.pinned = intToBool(cursor.getInt(8));
+                newPost.requested = intToBool(cursor.getInt(9));
+                newPost.timePosted = cursor.getString(10);
+                newPost.timeLastComment = cursor.getString(11);
+                newPost.amountOfComments = cursor.getInt(12);
+
+                /**
+                 * only add post to the results if not hidden,
+                 * or it is hidden while it is from the current user,
+                 * or it is hidden and the current user is a teacher
+                 */
+                if (!newPost.hidden || newPost.creator.equals(currentUser.Username) || currentUser.Rank == UserRank.Teacher)
+                    results.add(newPost);
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        }
+
+        Collections.sort(results, Collections.<objects.Post>reverseOrder());
+        return results;
+    }
+
     // all database code concerning school actions
-    public static class School{
+    public static class School {
         /**
          * Add a new user to the system
-         * @param Username The username of the new user
+         *
+         * @param Username  The username of the new user
          * @param IsStudent true if a student, false if a teacher
          * @return true if successfully added, false if the username was already in use
          */
-        public static boolean addPerson(String Username, boolean IsStudent){
+        public static boolean addPerson(String Username, boolean IsStudent) {
             //first check if the username not already exists
             SQLiteDatabase db = ourInstance.getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT * " +
-                    "FROM User " +
-                    "WHERE Username like ? ",
+                            "FROM User " +
+                            "WHERE Username like ? ",
                     new String[]{Username});
 
             // check result
@@ -273,7 +339,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             // if the user doesn't exist yet, make him
             String myRank;
 
-            if(IsStudent)
+            if (IsStudent)
                 myRank = "Student";
             else
                 myRank = "Teacher";
@@ -291,6 +357,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         /**
          * Get a list of courses filtered with the given text.
+         *
          * @param Filter The filter text for the search results.
          * @return a filtered course list
          */
@@ -299,7 +366,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             // check Filter query
             Filter = DatabaseUtils.sqlEscapeString(Filter);
-            Filter = Filter.substring(1,Filter.length()-1);
+            Filter = Filter.substring(1, Filter.length() - 1);
 
             // set request query
             Cursor cursor = db.rawQuery(
@@ -322,6 +389,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         /**
          * Delete a course
+         *
          * @param CourseName The course name to be deleted
          */
         public static void deleteCourse(String CourseName) {
@@ -334,6 +402,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         /**
          * Add a new course
+         *
          * @param CourseName The course name to be added
          */
         public static boolean addCourse(String CourseName) {
@@ -458,6 +527,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         /**
          * Get a list of courses that the current user is not assigned to, filtered with the given text.
+         *
          * @param Filter The filter text for the search results.
          * @return
          */
@@ -466,7 +536,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
             // check Filter query
             Filter = DatabaseUtils.sqlEscapeString(Filter);
-            Filter = Filter.substring(1,Filter.length()-1);
+            Filter = Filter.substring(1, Filter.length() - 1);
 
             // set request query
             Cursor cursor = db.rawQuery(
@@ -493,9 +563,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         /**
          * Add a course to the current user.
+         *
          * @param CourseName The name of the course.
          */
-        public static void addCourse(String CourseName){
+        public static void addCourse(String CourseName) {
             SQLiteDatabase db = ourInstance.getWritableDatabase();
             db.execSQL("INSERT INTO User_has_Course (User_id, Course_id) " +
                             "SELECT u.id, c.id " +
@@ -506,74 +577,57 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     new Object[]{currentUser.Username, CourseName});
             db.close();
         }
+
+
+        /**
+         * Get requested posts from all courses the user is subscribed to
+         *
+         * @return a list of posts
+         */
+        public static ArrayList<objects.Post> getRequestedPosts() {
+            SQLiteDatabase db = ourInstance.getReadableDatabase();
+
+            // set request query
+            Cursor cursor = db.rawQuery("SELECT u.Username, r.Name, u.Avatar, cs.Name, p.id, p.Title, p.Content, p.Hidden, p.Pinned, p.Requested, p.Time, MAX(cm.Time) AS 'LastComment', COUNT (cm.id) AS 'AmountOfComments' " +
+                    "FROM Course AS cs " +
+                    "INNER JOIN User_has_Course AS uhc ON uhc.Course_id = cs.id " +
+                    "INNER JOIN User AS me ON me.id = uhc.User_id " +
+                    "INNER JOIN Post AS p ON p.Course_id = cs.id " +
+                    "INNER JOIN User AS u ON u.id = p.User_id " +
+                    "INNER JOIN Rank AS r on r.id = u.Rank_id " +
+                    "LEFT OUTER JOIN Comment as cm ON p.id = cm.Post_id " +
+                    "WHERE me.Username = ? " +
+                    "AND p.Requested = '1' " +
+                    "GROUP BY p.id " +
+                    "ORDER BY p.Pinned DESC, LastComment DESC, p.Time DESC", new String[]{currentUser.Username});
+
+
+            return DatabaseHelper.getPostDetails(cursor);
+        }
     }
 
     // all database code concerning the current Course
     public static class Course {
+        /**
+         * Get posts from the current selected course
+         *
+         * @return a list of posts from the currently selected posts
+         */
         public static ArrayList<objects.Post> getPosts() {
             SQLiteDatabase db = ourInstance.getReadableDatabase();
 
             // set request query
-            Cursor cursor = db.rawQuery("SELECT u.Username, r.Name, u.Avatar, p.id, p.Title, p.Content, p.Hidden, p.Pinned, p.Requested, p.Time, MAX(cm.Time) AS 'LastComment', COUNT (cm.id) AS 'AmountOfComments' " +
+            Cursor cursor = db.rawQuery("SELECT u.Username, r.Name, u.Avatar, cs.Name, p.id, p.Title, p.Content, p.Hidden, p.Pinned, p.Requested, p.Time, MAX(cm.Time) AS 'LastComment', COUNT (cm.id) AS 'AmountOfComments' " +
                     "FROM Course AS cs " +
                     "INNER JOIN User AS u ON u.id = p.User_id " +
                     "INNER JOIN Rank AS r on r.id = u.Rank_id " +
-                    "INNER JOIN Post as p ON p.Course_id = cs.id " +
+                    "INNER JOIN Post AS p ON p.Course_id = cs.id " +
                     "LEFT OUTER JOIN Comment as cm ON p.id = cm.Post_id " +
                     "WHERE cs.Name = ? " +
                     "GROUP BY p.id " +
                     "ORDER BY p.Pinned DESC, LastComment DESC, p.Time DESC", new String[]{ActivityCoursePosts.currentCourse});
 
-            // get results
-            ArrayList<objects.Post> results = new ArrayList<>();
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    String rankText = cursor.getString(1);
-                    UserRank realRank = null;
-
-                    // check rank
-                    switch (rankText) {
-                        case "Student":
-                            realRank = UserRank.Student;
-                            break;
-
-                        case "Teacher":
-                            realRank = UserRank.Teacher;
-                            break;
-
-                        case "School":
-                            realRank = UserRank.School;
-                            break;
-                    }
-
-                    // create user
-                    objects.User newUser = new objects.User(cursor.getString(0), cursor.getBlob(2), realRank);
-
-                    objects.Post newPost = new objects.Post();
-                    newPost.creator = cursor.getString(0);
-                    newPost.user = newUser;
-                    newPost.id = cursor.getInt(3);
-                    newPost.title = cursor.getString(4);
-                    newPost.content = cursor.getString(5);
-                    newPost.hidden = intToBool(cursor.getInt(6));
-                    newPost.pinned = intToBool(cursor.getInt(7));
-                    newPost.requested = intToBool(cursor.getInt(8));
-                    newPost.timePosted = cursor.getString(9);
-                    newPost.timeLastComment = cursor.getString(10);
-                    newPost.amountOfComments = cursor.getInt(11);
-
-                    // only add post to the results if not hidden,
-                    // or it is hidden while it is from the current user,
-                    // or it is hidden and the current user is a teacher
-                    if (!newPost.hidden || newPost.creator.equals(currentUser.Username) || currentUser.Rank == UserRank.Teacher)
-                        results.add(newPost);
-                } while (cursor.moveToNext());
-
-                cursor.close();
-            }
-
-
-            return results;
+            return DatabaseHelper.getPostDetails(cursor);
         }
 
         /**
@@ -598,11 +652,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             int pinned = boolToInt(Pinned);
 
             db.execSQL("INSERT INTO Post (Title, Content, Hidden, Requested, Pinned, Time, User_id, Course_id) " +
-                    "SELECT ?, ?, ?, ?, ?, ?, u.id, c.id " +
-                    "FROM User AS u " +
-                    "LEFT OUTER JOIN Course AS c " +
-                    "WHERE u.Username = ? " +
-                    "AND c.Name = ?",
+                            "SELECT ?, ?, ?, ?, ?, ?, u.id, c.id " +
+                            "FROM User AS u " +
+                            "LEFT OUTER JOIN Course AS c " +
+                            "WHERE u.Username = ? " +
+                            "AND c.Name = ?",
                     new Object[]{Title, Content, hidden, requested, pinned, time, currentUser.Username, ActivityCoursePosts.currentCourse});
 
             db.close();
@@ -610,16 +664,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         /**
          * Delete a posts from the current selected course
-         * @param Title the title of the post within the current course
+         *
+         * @param Title    the title of the post within the current course
+         * @param Time     the time when this was posted
+         * @param Username the username of who posted this
          */
-        public static void deletePost(String Title) {
+        public static void deletePost(String Title, String Username, String Time) {
             // get data
             SQLiteDatabase db = ourInstance.getWritableDatabase();
 
             db.execSQL("DELETE FROM Post " +
                             "WHERE Title = ? " +
+                            "AND Time = ? " +
+                            "AND User_id = (SELECT id FROM User WHERE Username = ?) " +
                             "AND Course_id = (SELECT id FROM Course WHERE Name = ?)",
-                    new Object[]{Title, ActivityCoursePosts.currentCourse});
+                    new Object[]{Title, Time, Username, ActivityCoursePosts.currentCourse});
 
             db.close();
         }
@@ -627,7 +686,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         /**
          * The current user will leave the selected course
          */
-        public static void leave(){
+        public static void leave() {
             SQLiteDatabase db = ourInstance.getWritableDatabase();
 
             db.execSQL("DELETE FROM User_has_Course " +
@@ -760,6 +819,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         /**
          * Add a comment to the current selected post with the current user
+         *
          * @param Content The content of the comment
          */
         @SuppressLint("SimpleDateFormat")
@@ -779,8 +839,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         /**
          * Delete a comment from the current post
+         *
          * @param Username the username of the comment
-         * @param Time the time when this comment was posted
+         * @param Time     the time when this comment was posted
          */
         public static void deleteComment(String Username, String Time) {
             // get data
@@ -811,7 +872,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param input boolean input
      * @return 1 if true, 0 if false
      */
-    static int boolToInt(boolean input){
+    static int boolToInt(boolean input) {
         if (input)
             return 1;
         return 0;

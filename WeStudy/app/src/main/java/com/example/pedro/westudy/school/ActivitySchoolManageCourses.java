@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.pedro.westudy.ActivityJoinCourse;
 import com.example.pedro.westudy.ActivityMain;
+import com.example.pedro.westudy.ActivityPostComments;
 import com.example.pedro.westudy.R;
 import com.example.pedro.westudy.student.ActivityStudentHome;
 
@@ -52,7 +53,7 @@ public class ActivitySchoolManageCourses extends AppCompatActivity {
         // set title
         setTitle("Course list");
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.content_activity_school_manage_courses_fabAddCourse);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,7 +112,42 @@ public class ActivitySchoolManageCourses extends AppCompatActivity {
 
                         // make list adapter
                         final ArrayList<String> myCourses = DatabaseHelper.School.getFilteredCourses(etFilter.getText().toString());
-                        final AdapterCourseDelete adapter = new AdapterCourseDelete(getBaseContext(), myCourses);
+                        final AdapterCourse adapter = new AdapterCourse(getBaseContext(), myCourses);
+                        // final AdapterCourseDelete adapter = new AdapterCourseDelete(getBaseContext(), myCourses);
+
+                        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                            @Override
+                            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                                Log.d(TAG, "User tries to delete course: " + myCourses.get(position));
+
+                                new AlertDialog.Builder(ActivitySchoolManageCourses.this)
+                                        .setTitle("Delete course?")
+                                        .setMessage(myCourses.get(position))
+                                        .setIcon(R.drawable.ic_warning)
+                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Log.d(TAG, "User pressed 'no', the course will not be deleted.");
+                                            }
+                                        })
+                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Log.d(TAG, "User pressed 'yes', and thus the course will be deleted.");
+                                                Toast.makeText(getBaseContext(), "Course deleted", Toast.LENGTH_SHORT).show();
+
+                                                // delete
+                                                DatabaseHelper.School.deleteCourse(myCourses.get(position));
+
+                                                // reload
+                                                filterChanged = true;
+                                            }
+                                        })
+                                        .create().show();
+
+                                return true;
+                            }
+                        });
 
                         runOnUiThread(new Runnable() {
                             @Override

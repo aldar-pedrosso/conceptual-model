@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.example.pedro.westudy.teacher.ActivityTeacherHome;
+
 import java.util.ArrayList;
 
 import enums.UserRank;
@@ -115,6 +117,7 @@ public class ActivityPostComments extends AppCompatActivity {
 
                                         // reload
                                         updatePending = true;
+                                        ActivityTeacherHome.updatePending = true;
                                         onResume();
                                     }
                                 })
@@ -170,12 +173,17 @@ public class ActivityPostComments extends AppCompatActivity {
 
         // set pinned toggle
         pinnedToggle = menu.findItem(R.id.menu_item_pinnedToggle);
+        MenuItem myWhitespace = menu.findItem(R.id.menu_item_logout_whitespace);
 
         // only teacher may see pinned toggle
-        if (currentUser.Rank == UserRank.Teacher)
+        if (currentUser.Rank == UserRank.Teacher){
             pinnedToggle.setVisible(true);
-        else
+            myWhitespace.setVisible(true);
+        }
+        else{
             pinnedToggle.setVisible(false);
+            myWhitespace.setVisible(false);
+        }
 
         return true;
     }
@@ -220,6 +228,7 @@ public class ActivityPostComments extends AppCompatActivity {
 
         // toggle update in activity with posts
         ActivityCoursePosts.updatePending = true;
+        ActivityTeacherHome.updatePending = true;
     }
 
     private void changeRequest(Boolean newValue) {
@@ -237,5 +246,6 @@ public class ActivityPostComments extends AppCompatActivity {
 
         // toggle update in activity with posts
         ActivityCoursePosts.updatePending = true;
+        ActivityTeacherHome.updatePending = true;
     }
 }

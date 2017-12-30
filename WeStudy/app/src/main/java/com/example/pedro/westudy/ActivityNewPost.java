@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pedro.westudy.teacher.ActivityTeacherHome;
+
 import enums.UserRank;
 import statics.DatabaseHelper;
 
@@ -81,6 +83,7 @@ public class ActivityNewPost extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), "Post added", Toast.LENGTH_SHORT).show();
 
                 ActivityCoursePosts.updatePending = true;
+                ActivityTeacherHome.updatePending = true;
                 finish();
                 break;
 
